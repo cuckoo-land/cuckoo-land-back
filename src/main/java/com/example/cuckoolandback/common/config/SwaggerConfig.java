@@ -3,7 +3,6 @@ package com.example.cuckoolandback.common.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -25,7 +24,6 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -42,7 +40,9 @@ public class SwaggerConfig {
     private SecurityContext securityContext() {
         return SecurityContext
                 .builder()
-                .securityReferences(defaultAuth()).forPaths(PathSelectors.any()).build();
+                .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.any())
+                .build();
     }
     private List<SecurityReference> defaultAuth(){
         AuthorizationScope authorizationScope = new AuthorizationScope("global","accessEverything");
@@ -56,7 +56,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("cukcoo-land API")
                 .description("swagger config")
-                .version("1.0")
+                .version("2.0")
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -38,10 +37,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             "/configuration/security",
             "/swagger-ui.html",
             "/swagger-ui.html/**",
-            "/webjars/**",
-            /* swagger v3 */
-            "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/webjars/**"
     };
 
     @Bean
@@ -71,9 +67,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").authenticated()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
-                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().permitAll();
-
         return http.build();
     }
 

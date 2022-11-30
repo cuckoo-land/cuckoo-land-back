@@ -50,7 +50,7 @@ public class MemberController {
         TokenDto tokenDto = memberService.login(loginRequestDto);
         return ResponseEntity
                 .ok()
-                .header(Message.JWT_HEADER_NAME.getMsg(), tokenDto.getAccessToken())
+                .header(Message.JWT_HEADER_NAME.getMsg(), "Bearer "+tokenDto.getAuthorization())
                 .header(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken())
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(Message.LOGIN_SUCCESS.getMsg());
@@ -62,7 +62,7 @@ public class MemberController {
         GuestResponseDto guestResponseDto = memberService.loginGuest();
         return ResponseEntity
                 .ok()
-                .header(Message.JWT_HEADER_NAME.getMsg(), guestResponseDto.getTokenDto().getAccessToken())
+                .header(Message.JWT_HEADER_NAME.getMsg(), guestResponseDto.getTokenDto().getAuthorization())
                 .header(Message.REFRESH_HEADER_NAME.getMsg(), guestResponseDto.getTokenDto().getRefreshToken())
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(guestResponseDto.getMemberId());
@@ -75,6 +75,15 @@ public class MemberController {
                 .ok()
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(memberService.logoutGuest(request));
+    }
+
+    @ApiOperation(value = "테스트")
+    @GetMapping("/auth/boolean")
+    public ResponseEntity<String> test(HttpServletRequest request) {
+        return ResponseEntity
+                .ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(memberService.test(request));
     }
 
 //    @ApiOperation(value = "토큰 재발급")

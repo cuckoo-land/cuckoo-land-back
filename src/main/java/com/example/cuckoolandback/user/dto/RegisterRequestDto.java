@@ -12,7 +12,7 @@ public class RegisterRequestDto {
 
     @ApiModelProperty(value="아이디", example = "user01", required = true)
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
-    @Pattern(regexp = "^[a-zA-Z-0-9]{2,8}$", message = "아이디는 2~8자리 영문, 숫자를 사용합니다.")
+    @Pattern(regexp = "^[a-zA-Z-0-9]{2,8}$", message = "아이디는 2~8자리 영문,숫자를 사용합니다.")
     private String memberId;
 
     @ApiModelProperty(value="닉네임", example = "뻐꾹이", required = true)

@@ -3,11 +3,11 @@ package com.example.cuckoolandback.user.service;
 import com.example.cuckoolandback.common.Message;
 import com.example.cuckoolandback.common.exception.CustomException;
 import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.common.util.HeaderUtil;
 import com.example.cuckoolandback.user.domain.Member;
 import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.dto.*;
-import com.example.cuckoolandback.user.jwt.JwtAuthFilter;
 import com.example.cuckoolandback.user.jwt.JwtProvider;
 import com.example.cuckoolandback.user.jwt.RefreshToken;
 import com.example.cuckoolandback.user.jwt.TokenDto;
@@ -71,6 +71,7 @@ public class MemberService {
         }
     }
 
+    @Transactional
     public TokenDto login(LoginRequestDto loginRequestDto) {
         // 가입 회원 여부 체크
         Member member = memberRepository.findByMemberId(loginRequestDto.getMemberId())
@@ -87,7 +88,7 @@ public class MemberService {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(member.getMemberId());
         if (refreshToken.isEmpty()) {
             // 없는 경우 새로 등록
-            refreshTokenRepository.saveAndFlush(new RefreshToken(member.getMemberId(), tokenDto.getRefreshToken()));
+            refreshTokenRepository.save(new RefreshToken(member, tokenDto.getRefreshToken()));
         } else {
             // DB에 refresh 토큰 업데이트
             refreshToken.get().updateToken(tokenDto.getRefreshToken());
@@ -98,33 +99,31 @@ public class MemberService {
     @Transactional
     public GuestResponseDto loginGuest() {
         Member guest = Member.builder()
-                .memberId("Guest"+System.currentTimeMillis())
-                .nickname("익명새"+System.currentTimeMillis())
+                .memberId("Guest"+String.valueOf(System.currentTimeMillis()))
+                .nickname("익명새"+String.valueOf(System.currentTimeMillis()))
                 .password(passwordEncoder.encode("password"))
                 .roleType(RoleType.GUEST)
                 .build();
         memberRepository.save(guest);
         TokenDto tokenDto = jwtProvider.generateTokenDto(guest);
-        refreshTokenRepository.saveAndFlush(new RefreshToken(guest.getMemberId(), tokenDto.getRefreshToken()));
+        refreshTokenRepository.saveAndFlush(new RefreshToken(guest, tokenDto.getRefreshToken()));
         return GuestResponseDto.builder()
                 .tokenDto(tokenDto)
                 .memberId(guest.getMemberId())
                 .nickname(guest.getNickname())
-                .password("password")
                 .build();
     }
 
     @Transactional
     public String logoutGuest(HttpServletRequest request) {
-        String refreshToken = JwtAuthFilter.getRefreshToken(request);
+        String refreshToken = HeaderUtil.getRefreshToken(request);
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         memberRepository.deleteById(principal.getMember().getSeq());
         refreshTokenRepository.deleteByToken(refreshToken);
         return Message.LOGOUT_SUCCESS.getMsg();
     }
 
-//    @Transactional
-//    public TokenDto reissue(HttpServletRequest request) {
-//
-//    }
+    public String test(HttpServletRequest request) {
+        return "접근가능";
+    }
 }

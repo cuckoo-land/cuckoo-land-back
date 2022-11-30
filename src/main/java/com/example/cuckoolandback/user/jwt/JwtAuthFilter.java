@@ -1,6 +1,8 @@
 package com.example.cuckoolandback.user.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
+import com.example.cuckoolandback.common.Message;
+import com.example.cuckoolandback.common.util.HeaderUtil;
+import com.example.cuckoolandback.user.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +16,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_PREFIX = "";
-    private final static String HEADER_REFRESH = "Refresh";
     private final JwtProvider jwtProvider;
 
     @Override
@@ -25,45 +24,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        try {
-            String accessToken = getAccessToken(request);
+            String accessToken = HeaderUtil.getAccessToken(request);
+            String refreshToken = HeaderUtil.getRefreshToken(request);
+
             if (jwtProvider.validateToken(accessToken)) {
                 Authentication auth = jwtProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                request.setAttribute("INVALID_JWT", "INVALID_JWT");
+            }// 엑세스 토큰이 만료
+            else if (refreshToken != null) {
+                /// 리프레시 토큰 검증
+                boolean validateRefreshToken = jwtProvider.validateToken(refreshToken);
+                boolean isRefreshToken = jwtProvider.existsRefreshToken(refreshToken);
+                if (validateRefreshToken && isRefreshToken) {
+                    /// 리프레시 토큰으로 멤버 정보 가져오기
+                    Member member = jwtProvider.getMemberIdByToken(refreshToken);
+                    /// 토큰 발급 후 헤더로 응답
+                    TokenDto tokenDto = jwtProvider.generateTokenDto(member);
+                    response.setHeader(Message.JWT_HEADER_NAME.getMsg(), tokenDto.getAuthorization());
+                    response.setHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
+                    /// 컨텍스트 반영
+                    Authentication auth = jwtProvider.getAuthentication(tokenDto.getRefreshToken());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
-        } catch (ExpiredJwtException e) {
-            request.setAttribute("EXPIRED_JWT", "EXPIRED_JWT");
-            logger.error("Could not set user authentication in security context", e);
-        } catch (NullPointerException e) {
-            logger.error("Could not set user authentication in security context", e);
-        }
         filterChain.doFilter(request, response);
     }
-
-    public static String getAccessToken(HttpServletRequest request) {
-        String headerValue = request.getHeader(HEADER_AUTHORIZATION);
-
-        if (headerValue == null) {
-            return null;
-        }
-        if (headerValue.startsWith(TOKEN_PREFIX)) {
-            return headerValue.substring(TOKEN_PREFIX.length());
-        }
-        return null;
-    }
-
-    public static String getRefreshToken(HttpServletRequest request) {
-        String headerValue = request.getHeader(HEADER_REFRESH);
-
-        if (headerValue == null) {
-            return null;
-        }
-        if (headerValue.startsWith(TOKEN_PREFIX)) {
-            return headerValue.substring(TOKEN_PREFIX.length());
-        }
-        return null;
-    }
-
 }
