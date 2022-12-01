@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -101,7 +102,7 @@ public class MemberService {
         Member guest = Member.builder()
                 .memberId("Guest"+String.valueOf(System.currentTimeMillis()))
                 .nickname("익명새"+String.valueOf(System.currentTimeMillis()))
-                .password(passwordEncoder.encode("password"))
+                .password(passwordEncoder.encode("pwd"+ UUID.randomUUID()))
                 .roleType(RoleType.GUEST)
                 .build();
         memberRepository.save(guest);

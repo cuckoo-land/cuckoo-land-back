@@ -62,7 +62,7 @@ public class MemberController {
         GuestResponseDto guestResponseDto = memberService.loginGuest();
         return ResponseEntity
                 .ok()
-                .header(Message.JWT_HEADER_NAME.getMsg(), guestResponseDto.getTokenDto().getAuthorization())
+                .header(Message.JWT_HEADER_NAME.getMsg(), "Bearer "+guestResponseDto.getTokenDto().getAuthorization())
                 .header(Message.REFRESH_HEADER_NAME.getMsg(), guestResponseDto.getTokenDto().getRefreshToken())
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(guestResponseDto.getMemberId());
