@@ -3,7 +3,7 @@ name: Deploy to Amazon EC2
 on:
   push:
     branches:
-      - main
+      - chore/자동배포
 
 # 본인이 설정한 값을 여기서 채워넣습니다.
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
@@ -34,7 +34,7 @@ jobs:
           java-version: '11'
 
       # (3) properties 생성
-      - name: make application-db.properties
+      - name: make application-db_url.properties
         run: |
           echo "ls -a . & pwd"
           pwd
@@ -42,15 +42,51 @@ jobs:
           echo "mkdir & touch"
           mkdir -p ./src/main/resources 
           cd ./src/main/resources
-          touch ./application-db.properties
+          touch ./application-db_url.properties
           pwd
           ls -a .
           echo "copy properties"
-          echo $DEV_PROP >> ./application-db.properties
-          cat application-db.properties
+          echo $DEV_PROP >> ./application-db_url.properties
+          cat application-db_url.properties
         shell: bash
         env:
-          DEV_PROP: ${{ secrets.DB }}
+          DEV_PROP: ${{ secrets.DB_URL }}
+
+      - name: make application-db_user.properties
+        run: |
+          echo "ls -a . & pwd"
+          pwd
+          ls -a .
+          echo "mkdir & touch"
+          mkdir -p ./src/main/resources 
+          cd ./src/main/resources
+          touch ./application-db_user.properties
+          pwd
+          ls -a .
+          echo "copy properties"
+          echo $DEV_PROP >> ./application-db_user.properties
+          cat application-db_user.properties
+        shell: bash
+        env:
+          DEV_PROP: ${{ secrets.DB_USER}}
+
+      - name: make application-db_pw.properties
+        run: |
+          echo "ls -a . & pwd"
+          pwd
+          ls -a .
+          echo "mkdir & touch"
+          mkdir -p ./src/main/resources 
+          cd ./src/main/resources
+          touch ./application-db_pw.properties
+          pwd
+          ls -a .
+          echo "copy properties"
+          echo $DEV_PROP >> ./application-db_pw.properties
+          cat application-db_pw.properties
+        shell: bash
+        env:
+          DEV_PROP: ${{ secrets.DB_PASSWORD }}
 
 
       # (4) Gradle build (Test 제외)
