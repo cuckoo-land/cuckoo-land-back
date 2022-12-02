@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class MemberService {
     }
 
     @Transactional
-    public String register(RegisterRequestDto registerDto) {
+    public MemberResponseDto register(RegisterRequestDto registerDto) {
         //이메일 중복
         dupleIdCheck(registerDto.getMemberId());
         //닉네임 중복
@@ -57,7 +58,11 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return Message.REGISTER_SUCCESS.getMsg();
+        return MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .roleType(member.getRoleType())
+                .build();
     }
 
     private void dupleIdCheck(String memberId) {
@@ -73,7 +78,7 @@ public class MemberService {
     }
 
     @Transactional
-    public TokenDto login(LoginRequestDto loginRequestDto) {
+    public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 가입 회원 여부 체크
         Member member = memberRepository.findByMemberId(loginRequestDto.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_ID_PWD));
@@ -94,24 +99,36 @@ public class MemberService {
             // DB에 refresh 토큰 업데이트
             refreshToken.get().updateToken(tokenDto.getRefreshToken());
         }
-        return tokenDto;
+        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),"Bearer " + tokenDto.getAuthorization());
+        response.addHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
+
+        return MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .roleType(member.getRoleType())
+                .build();
     }
 
     @Transactional
-    public GuestResponseDto loginGuest() {
+    public MemberResponseDto loginGuest(NickRequestDto nickRequestDto,HttpServletResponse response) {
+        dupleNickCheck(nickRequestDto.getNickname());
         Member guest = Member.builder()
-                .memberId("Guest"+String.valueOf(System.currentTimeMillis()))
-                .nickname("익명새"+String.valueOf(System.currentTimeMillis()))
+                .memberId("Guest"+System.currentTimeMillis())
+                .nickname(nickRequestDto.getNickname())
                 .password(passwordEncoder.encode("pwd"+ UUID.randomUUID()))
                 .roleType(RoleType.GUEST)
                 .build();
         memberRepository.save(guest);
         TokenDto tokenDto = jwtProvider.generateTokenDto(guest);
         refreshTokenRepository.saveAndFlush(new RefreshToken(guest, tokenDto.getRefreshToken()));
-        return GuestResponseDto.builder()
-                .tokenDto(tokenDto)
+
+        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),"Bearer " + tokenDto.getAuthorization());
+        response.addHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
+
+        return MemberResponseDto.builder()
                 .memberId(guest.getMemberId())
                 .nickname(guest.getNickname())
+                .roleType(guest.getRoleType())
                 .build();
     }
 
