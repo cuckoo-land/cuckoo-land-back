@@ -68,7 +68,7 @@ jobs:
           cat application-db_user.properties
         shell: bash
         env:
-          DEV_PROP: ${{ secrets.DB_USER}}
+          DEV_PROP: ${{ secrets.DB_USERNAME}}
 
       - name: make application-db_pw.properties
         run: |
