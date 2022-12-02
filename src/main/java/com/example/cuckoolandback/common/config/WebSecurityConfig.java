@@ -1,5 +1,6 @@
 package com.example.cuckoolandback.common.config;
 
+import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.jwt.JwtAuthEntryPoint;
 import com.example.cuckoolandback.user.jwt.JwtAuthFilter;
 import com.example.cuckoolandback.user.jwt.JwtProvider;
@@ -65,6 +66,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/api/user/**").hasAnyAuthority(RoleType.USER.getCode())
                 .antMatchers("/api/auth/**").authenticated()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .anyRequest().permitAll();

@@ -13,12 +13,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -32,7 +37,7 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String JWT_SECRET;
     private Key key;
-
+    private static final String AUTHORITIES_KEY = "role";
     @PostConstruct
     protected void keyInit() {
         key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
@@ -41,9 +46,10 @@ public class JwtProvider {
     public TokenDto generateTokenDto(Member member) {
         long now = new Date().getTime();
 
-        int ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 1; // 1분
+        int ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 60분
         String accessToken = Jwts.builder()
                 .setSubject(member.getMemberId())
+                .claim(AUTHORITIES_KEY,member.getRoleType())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -53,6 +59,7 @@ public class JwtProvider {
         int REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 2주일
         String refreshToken = Jwts.builder()
                 .setSubject(member.getMemberId())
+                .claim(AUTHORITIES_KEY,member.getRoleType())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -60,11 +67,13 @@ public class JwtProvider {
 
         return new TokenDto(accessToken, refreshToken);
     }
-
     public Boolean validateToken(String token) throws ExpiredJwtException {
+        return this.getTokenClaims(token) != null;
+    }
+
+    public Claims getTokenClaims(String token){
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
@@ -78,12 +87,12 @@ public class JwtProvider {
         } catch(NullPointerException ex){
             log.error("JWT claims is null");
         }
-        return false;
+        return null;
     }
 
     public Authentication getAuthentication(String token) {
-        String memberId = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+        Claims claims = this.getTokenClaims(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
