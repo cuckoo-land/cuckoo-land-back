@@ -133,11 +133,10 @@ public class MemberService {
     }
 
     @Transactional
-    public String logoutGuest(HttpServletRequest request) {
-        String refreshToken = HeaderUtil.getRefreshToken(request);
+    public String logoutGuest() {
         UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         memberRepository.deleteById(principal.getMember().getSeq());
-        refreshTokenRepository.deleteByToken(refreshToken);
+        refreshTokenRepository.deleteByMemberId(principal.getMember().getMemberId());
         return Message.LOGOUT_SUCCESS.getMsg();
     }
 

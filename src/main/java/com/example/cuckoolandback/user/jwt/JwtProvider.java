@@ -56,7 +56,7 @@ public class JwtProvider {
                 .compact();
 
 
-        int REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 2주일
+        int REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 1주일
         String refreshToken = Jwts.builder()
                 .setSubject(member.getMemberId())
                 .claim(AUTHORITIES_KEY,member.getRoleType())

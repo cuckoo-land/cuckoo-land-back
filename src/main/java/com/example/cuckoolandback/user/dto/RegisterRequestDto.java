@@ -20,7 +20,7 @@ public class RegisterRequestDto {
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z-0-9]{2,8}$", message = "닉네임은 특수문자를 제외한 2~8자리여야 합니다.")
     private String nickname;
 
-    @ApiModelProperty(value="비밀번호", example = "Abcd123", required = true)
+    @ApiModelProperty(value="비밀번호", example = "Abcd123!", required = true)
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{8,32}", message = "비밀번호는 8~32자 영문,숫자,기호 사용하세요.")
     private String password;

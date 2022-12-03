@@ -56,11 +56,11 @@ public class MemberController {
 
     @ApiOperation(value = "게스트 아웃")
     @DeleteMapping("/guest/out")
-    public ResponseEntity<String> logoutGuest(HttpServletRequest request) {
+    public ResponseEntity<String> logoutGuest() {
         return ResponseEntity
                 .ok()
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
-                .body(memberService.logoutGuest(request));
+                .body(memberService.logoutGuest());
     }
 
     @ApiOperation(value = "테스트")

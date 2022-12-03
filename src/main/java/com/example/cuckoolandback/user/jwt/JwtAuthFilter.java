@@ -40,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     Member member = jwtProvider.getMemberIdByToken(refreshToken);
                     /// 토큰 발급 후 헤더로 응답
                     TokenDto tokenDto = jwtProvider.generateTokenDto(member);
-                    response.setHeader(Message.JWT_HEADER_NAME.getMsg(), tokenDto.getAuthorization());
+                    response.setHeader(Message.JWT_HEADER_NAME.getMsg(), "Bearer "+tokenDto.getAuthorization());
                     response.setHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
                     /// 컨텍스트 반영
                     Authentication auth = jwtProvider.getAuthentication(tokenDto.getRefreshToken());

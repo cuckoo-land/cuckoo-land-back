@@ -7,7 +7,7 @@ import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@ApiModel(value = "닉네임 객체", description = "닉네임 정보를 받기위한 객체")
+@ApiModel(value = "아이디 객체", description = "아이디 정보를 받기위한 객체")
 @Getter
 public class IdRequestDto {
     @ApiModelProperty(value="아이디", example = "bird1", required = true)
