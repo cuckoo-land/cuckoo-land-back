@@ -83,4 +83,12 @@ public class MemberController {
 //                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
 //                .body(Message.REISSUE_COMPLETED_TOKEN.getMsg());
 //    }
+
+    @ApiOperation(value = "닉네임 수정")
+    @PutMapping("/auth/updatenickname")
+    public ResponseEntity<String> updateNickname(@Valid @RequestBody NickRequestDto nickRequestDto){
+        return ResponseEntity.ok()
+                .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+                .body(memberService.updateNickname(nickRequestDto));
+    }
 }

@@ -30,4 +30,8 @@ public class Member extends BaseTime {
     @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friendList;
 
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
 }
