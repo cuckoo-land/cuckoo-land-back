@@ -88,6 +88,23 @@ jobs:
         env:
           DEV_PROP: ${{ secrets.DB_PASSWORD }}
 
+      - name: make application-jwt_key.properties
+        run: |
+          echo "ls -a . & pwd"
+          pwd
+          ls -a .
+          echo "mkdir & touch"
+          mkdir -p ./src/main/resources 
+          cd ./src/main/resources
+          touch ./application-jwt_key.properties
+          pwd
+          ls -a .
+          echo "copy properties"
+          echo $DEV_PROP >> ./application-jwt_key.properties
+          cat application-jwt_key.properties
+        shell: bash
+        env:
+          DEV_PROP: ${{ secrets.JWT_KEY }}
 
       # (4) Gradle build (Test 제외)
       - name: Build with Gradle
