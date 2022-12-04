@@ -4,8 +4,9 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-application.properties
-
+application-db_url.properties
+application-db_pw.properties
+application-db_user.properties
 ### STS ###
 .apt_generated
 .classpath
