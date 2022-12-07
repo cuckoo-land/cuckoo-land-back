@@ -3,7 +3,6 @@ package com.example.cuckoolandback.user.service;
 import com.example.cuckoolandback.common.Message;
 import com.example.cuckoolandback.common.exception.CustomException;
 import com.example.cuckoolandback.common.exception.ErrorCode;
-import com.example.cuckoolandback.common.util.HeaderUtil;
 import com.example.cuckoolandback.user.domain.Member;
 import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.domain.UserDetailsImpl;
@@ -142,5 +141,15 @@ public class MemberService {
 
     public String test(HttpServletRequest request) {
         return "접근가능";
+    }
+
+    @Transactional
+    public String updateNickname(NickRequestDto requestDto) {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Member member = memberRepository.findById(principal.getMember().getSeq())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        member.updateNickname(requestDto.getNickname());
+        memberRepository.save(member);
+        return Message.UPDATE_NICKNAME_SUCCESS.getMsg();
     }
 }
