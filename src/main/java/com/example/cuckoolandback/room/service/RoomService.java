@@ -30,4 +30,37 @@ public class RoomService {
     private final ParticipantRepository participantRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
+    public RoomResponseDto createRoom(RoomRequestDto roomRequestDto) {
+
+        Room room = Room.builder()
+                .code(UUID.randomUUID().toString())
+                .title(roomRequestDto.getTitle())
+                .hostId(roomRequestDto.getHostId())
+                .type(roomRequestDto.getType())
+                .state(RoomStatus.WAITING)
+                .visibility(roomRequestDto.isVisibility())
+                .maximum(roomRequestDto.getMaximum())
+                .password(passwordEncoder.encode(roomRequestDto.getPassword()))
+                .build();
+
+        roomRepository.save(room);
+
+        participantRepository.save(Participant.builder()
+                        .id(roomRequestDto.getHostId())
+                        .roomId(room.getId())
+                .build());
+
+        return RoomResponseDto.builder()
+                .id(room.getId())
+                .title(room.getTitle())
+                .state(room.getState())
+                .code(room.getCode())
+                .hostId(room.getHostId())
+                .maximum(room.getMaximum())
+                .visibility(room.isVisibility())
+                .numOfPeople(getNumOfPeople(room.getId()))
+                .type(room.getType())
+                .build();
+    }
 }

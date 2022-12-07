@@ -8,5 +8,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface ParticipantRepository extends JpaRepository<Participant,Long> {
 
+    @Query(value = "SELECT COUNT(*) FROM participant\n" +
+            "WHERE room_id = :roomId",
+            nativeQuery = true)
+    int numOfParticipants(@Param("roomId")Long roomId);
 
 }

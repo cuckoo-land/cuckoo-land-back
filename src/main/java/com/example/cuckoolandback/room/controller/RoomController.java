@@ -24,4 +24,11 @@ public class RoomController {
 
     private final RoomService roomService;
 
+    @ApiOperation(value = "게임 방 생성")
+    @PostMapping("/rooms")
+    public ResponseEntity<RoomResponseDto> createRoom(@RequestBody RoomRequestDto roomRequestDto){
+        return ResponseEntity.ok()
+                .body(roomService.createRoom(roomRequestDto));
+    }
+
 }
