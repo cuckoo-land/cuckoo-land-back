@@ -16,7 +16,11 @@ public enum Message {
     //FRIEND
     REQUEST_SUCCESS("친구요청 완료"),
     ACCEPT_SUCCESS("친구수락 완료"),
-    DELETE_SUCCESS("친구삭제 완료")
+
+    //ROOM
+    DELETE_SUCCESS("delete success"),
+
+    PASSWORD_CORRECT("password check success")
     ;
 
     final private String msg;
