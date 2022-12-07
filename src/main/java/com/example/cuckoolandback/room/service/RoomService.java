@@ -55,6 +55,21 @@ public class RoomService {
     }
 
     @Transactional
+    public MessageResponseDto checkRoomPassword(CheckRoomPasswordRequestDto requestDto) {
+        Room room = roomRepository.findById(requestDto.getRoomId())
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
+
+
+        // 비밀번호 체크
+        if (!passwordEncoder.matches(requestDto.getPassword(), room.getPassword())) {
+            throw new CustomException(ErrorCode.CHECK_FAILED);
+        }
+        return MessageResponseDto.builder()
+                .message(Message.PASSWORD_CORRECT.getMsg())
+                .build();
+    }
+
+    @Transactional
     public RoomResponseDto createRoom(RoomRequestDto roomRequestDto) {
 
         Room room = Room.builder()

@@ -52,4 +52,10 @@ public class RoomController {
                 .body(roomService.searchRoom(keyword,pageable));
     }
 
+    @ApiOperation(value = "비공개 게임방 비밀번호 체크")
+    @PostMapping("/rooms/pwcheck")
+    public ResponseEntity<MessageResponseDto> checkRoomPassword(@RequestBody CheckRoomPasswordRequestDto requestDto){
+        return ResponseEntity.ok()
+                .body(roomService.checkRoomPassword(requestDto));
+    }
 }
