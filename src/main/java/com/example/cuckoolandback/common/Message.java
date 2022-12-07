@@ -10,7 +10,15 @@ public enum Message {
     LOGIN_SUCCESS("로그인 완료"),
     REISSUE_COMPLETED_TOKEN("토큰 재발급 완료"),
     LOGOUT_SUCCESS("로그아웃 완료"),
-    AUTHENTICATION_FAIL("Authentication failed, login or reissue token");
+    AUTHENTICATION_FAIL("Authentication failed, login or reissue token"),
+
+    //ROOM
+    DELETE_SUCCESS("delete success"),
+
+    PASSWORD_CORRECT("password check success")
+
+    ;
+
 
     final private String msg;
     public String getMsg() {
