@@ -87,4 +87,19 @@ public class RoomService {
                 .type(room.getType())
                 .build();
     }
+
+    @Transactional
+    public MessageResponseDto deleteRoom(Long roomid) {
+
+        Room room = roomRepository.findById(roomid)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
+
+        roomRepository.delete(room);
+
+        return MessageResponseDto
+                .builder()
+                .message(Message.DELETE_SUCCESS.getMsg())
+                .build();
+    }
+
 }

@@ -37,4 +37,12 @@ public class RoomController {
         return ResponseEntity.ok()
                 .body(roomService.getAllRooms(pageable));
     }
+
+    @ApiOperation(value = "게임 방 삭제")
+    @DeleteMapping("/rooms/{roomid}")
+    public ResponseEntity<MessageResponseDto> deleteRoom(@PathVariable Long roomid){
+        return ResponseEntity.ok()
+                .body(roomService.deleteRoom(roomid));
+    }
+
 }
