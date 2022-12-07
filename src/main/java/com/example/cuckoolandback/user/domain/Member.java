@@ -1,8 +1,10 @@
 package com.example.cuckoolandback.user.domain;
 
 import com.example.cuckoolandback.common.domain.BaseTime;
+import com.example.cuckoolandback.friend.domain.Friend;
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,5 +26,12 @@ public class Member extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
+
+    @OneToMany(mappedBy = "response", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Friend> friendList;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
 }
