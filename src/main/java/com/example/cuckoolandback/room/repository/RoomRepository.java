@@ -12,5 +12,10 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room,Long> {
 
+    @Query(value = "SELECT * FROM room\n" +
+            "WHERE MATCH (host_id, title) AGAINST (:keyword IN BOOLEAN MODE)",
+            countQuery = "SELECT count(*) FROM room WHERE MATCH (host_id, title) AGAINST (:keyword IN BOOLEAN MODE)",
+            nativeQuery = true)
+    List<Room> searchRooms(@Param("keyword") String keyword, @PageableDefault Pageable pageable);
 
 }

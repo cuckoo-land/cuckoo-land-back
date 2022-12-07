@@ -102,4 +102,24 @@ public class RoomService {
                 .build();
     }
 
+    @Transactional
+    public List<RoomResponseDto> searchRoom(String keyword, Pageable pageable) {
+
+        List<Room> roomList = roomRepository.searchRooms(keyword, pageable);
+
+        List<RoomResponseDto> responseDtoList = roomList.stream().map(room -> RoomResponseDto.builder()
+                        .id(room.getId())
+                        .title(room.getTitle())
+                        .state(room.getState())
+                        .code(room.getCode())
+                        .hostId(room.getHostId())
+                        .numOfPeople(getNumOfPeople(room.getId()))
+                        .maximum(room.getMaximum())
+                        .visibility(room.isVisibility())
+                        .type(room.getType())
+                        .build())
+                .collect(Collectors.toList());
+        return responseDtoList;
+    }
+
 }

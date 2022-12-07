@@ -45,4 +45,11 @@ public class RoomController {
                 .body(roomService.deleteRoom(roomid));
     }
 
+    @ApiOperation(value = "게임 방 검색")
+    @GetMapping("/rooms/search/{keyword}")
+    public ResponseEntity<List<RoomResponseDto>> searchRoom(@PathVariable String keyword, @PageableDefault(page = 0, size = 10) Pageable pageable){
+        return ResponseEntity.ok()
+                .body(roomService.searchRoom(keyword,pageable));
+    }
+
 }
