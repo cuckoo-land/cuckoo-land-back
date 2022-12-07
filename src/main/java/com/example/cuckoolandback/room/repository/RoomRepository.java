@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room,Long> {
 
+    Optional<Room> findRoomByCode(String code);
+
     @Query(value = "SELECT * FROM room\n" +
             "WHERE MATCH (host_id, title) AGAINST (:keyword IN BOOLEAN MODE)",
             countQuery = "SELECT count(*) FROM room WHERE MATCH (host_id, title) AGAINST (:keyword IN BOOLEAN MODE)",

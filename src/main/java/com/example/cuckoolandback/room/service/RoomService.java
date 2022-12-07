@@ -137,4 +137,22 @@ public class RoomService {
         return responseDtoList;
     }
 
+    @Transactional
+    public RoomResponseDto searchRoom4Code(String code) {
+
+        Room room = roomRepository.findRoomByCode(code)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
+
+        return RoomResponseDto.builder()
+                .id(room.getId())
+                .title(room.getTitle())
+                .state(room.getState())
+                .code(room.getCode())
+                .hostId(room.getHostId())
+                .maximum(room.getMaximum())
+                .visibility(room.isVisibility())
+                .numOfPeople(getNumOfPeople(room.getId()))
+                .type(room.getType())
+                .build();
+    }
 }

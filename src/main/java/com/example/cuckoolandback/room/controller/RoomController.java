@@ -52,6 +52,13 @@ public class RoomController {
                 .body(roomService.searchRoom(keyword,pageable));
     }
 
+    @ApiOperation(value = "참여코드로 게임 방 검색")
+    @GetMapping("/rooms/code/{code}")
+    public ResponseEntity<RoomResponseDto> searchRoom4Code(@PathVariable String code){
+        return ResponseEntity.ok()
+                .body(roomService.searchRoom4Code(code));
+    }
+
     @ApiOperation(value = "비공개 게임방 비밀번호 체크")
     @PostMapping("/rooms/pwcheck")
     public ResponseEntity<MessageResponseDto> checkRoomPassword(@RequestBody CheckRoomPasswordRequestDto requestDto){
