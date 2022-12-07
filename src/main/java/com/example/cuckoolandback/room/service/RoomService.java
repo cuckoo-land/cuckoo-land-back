@@ -31,6 +31,30 @@ public class RoomService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
+    public List<RoomResponseDto> getAllRooms(Pageable pageable) {
+
+        Page<Room> roomList = roomRepository.findAll(pageable);
+
+        List<RoomResponseDto> responseDtoList = roomList.stream().map(room -> RoomResponseDto.builder()
+                        .id(room.getId())
+                        .title(room.getTitle())
+                        .state(room.getState())
+                        .code(room.getCode())
+                        .hostId(room.getHostId())
+                        .maximum(room.getMaximum())
+                        .visibility(room.isVisibility())
+                        .type(room.getType())
+                        .numOfPeople(getNumOfPeople(room.getId()))
+                        .build())
+                .collect(Collectors.toList());
+        return responseDtoList;
+    }
+
+    public int getNumOfPeople(Long roomId) {
+        return participantRepository.numOfParticipants(roomId);
+    }
+
+    @Transactional
     public RoomResponseDto createRoom(RoomRequestDto roomRequestDto) {
 
         Room room = Room.builder()

@@ -31,4 +31,10 @@ public class RoomController {
                 .body(roomService.createRoom(roomRequestDto));
     }
 
+    @ApiOperation(value = "게임 방 불러오기")
+    @GetMapping("/rooms")
+    public ResponseEntity<List<RoomResponseDto>> getAllRoom(@PageableDefault(page = 0, size = 10) Pageable pageable){
+        return ResponseEntity.ok()
+                .body(roomService.getAllRooms(pageable));
+    }
 }
