@@ -14,6 +14,7 @@ import com.example.cuckoolandback.room.repository.ParticipantRepository;
 import com.example.cuckoolandback.room.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class RoomService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public List<RoomResponseDto> getAllRooms(Pageable pageable) {
+    public Page<RoomResponseDto> getAllRooms(Pageable pageable) {
 
         Page<Room> roomList = roomRepository.findAll(pageable);
 
-        List<RoomResponseDto> responseDtoList = roomList.stream().map(room -> RoomResponseDto.builder()
+        List<RoomResponseDto> responseDtoList = (List<RoomResponseDto>) roomList.stream().map(room ->  RoomResponseDto.builder()
                         .id(room.getId())
                         .title(room.getTitle())
                         .state(room.getState())
@@ -47,7 +48,7 @@ public class RoomService {
                         .numOfPeople(getNumOfPeople(room.getId()))
                         .build())
                 .collect(Collectors.toList());
-        return responseDtoList;
+        return new PageImpl<>(responseDtoList,pageable,roomList.getTotalElements());
     }
 
     public int getNumOfPeople(Long roomId) {

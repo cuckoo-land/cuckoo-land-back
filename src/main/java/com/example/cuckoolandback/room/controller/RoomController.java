@@ -1,5 +1,6 @@
 package com.example.cuckoolandback.room.controller;
 
+import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.dto.CheckRoomPasswordRequestDto;
 import com.example.cuckoolandback.room.dto.MessageResponseDto;
 import com.example.cuckoolandback.room.dto.RoomRequestDto;
@@ -7,6 +8,7 @@ import com.example.cuckoolandback.room.dto.RoomResponseDto;
 import com.example.cuckoolandback.room.service.RoomService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
@@ -33,7 +35,7 @@ public class RoomController {
 
     @ApiOperation(value = "게임 방 불러오기")
     @GetMapping("/rooms")
-    public ResponseEntity<List<RoomResponseDto>> getAllRoom(@PageableDefault(page = 0, size = 10) Pageable pageable){
+    public ResponseEntity<Page<RoomResponseDto>> getAllRoom(@PageableDefault(page = 0, size = 10) Pageable pageable){
         return ResponseEntity.ok()
                 .body(roomService.getAllRooms(pageable));
     }
