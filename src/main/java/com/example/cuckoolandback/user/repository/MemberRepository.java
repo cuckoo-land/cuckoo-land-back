@@ -11,4 +11,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByNickname(String nickname);
 
     List<Member> findTopByMafiaWinScore();
+    List<Member> findTopByMajorWinScore();
 }
