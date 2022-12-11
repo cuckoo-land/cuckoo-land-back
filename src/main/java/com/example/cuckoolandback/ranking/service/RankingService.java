@@ -28,4 +28,21 @@ public class RankingService {
         }
         return rankingResponseDtoList;
     }
+
+    public List<RankingResponseDto> getAllMajorRanking() {
+        List<RankingResponseDto> rankingResponseDtoList = new ArrayList<>();
+        List<Member> memberList = memberRepository.findTopByMajorWinScore();
+        for (Member member : memberList) {
+            RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+                .nickname(member.getNickname())
+                .tier(member.getMajorTier())
+                .winNum(member.getMajorWinNum())
+                .winScore(member.getMajorWinScore())
+                .build();
+            rankingResponseDtoList.add(rankingResponseDto);
+        }
+        return rankingResponseDtoList;
+    }
+
+
 }

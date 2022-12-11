@@ -21,10 +21,15 @@ public class RankingController {
 
     @ApiOperation(value = "마피아 전체 랭킹 조회")
     @GetMapping("/mafia/total")
-    public ResponseEntity<List<RankingResponseDto>> getAllRanking() {
+    public ResponseEntity<List<RankingResponseDto>> getAllMafiaRanking() {
         return ResponseEntity.ok().body(rankingService.getAllMafiaRanking());
     }
 
+    @ApiOperation(value = "다수결 전체 랭킹 조회")
+    @GetMapping("/majority/total")
+    public ResponseEntity<List<RankingResponseDto>> getAllMajorRanking() {
+        return ResponseEntity.ok().body(rankingService.getAllMajorRanking());
+    }
 
 
 }
