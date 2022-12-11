@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 @Getter
 @Setter
 @Builder
-public class RoomResponseDto extends SpringDataWebProperties.Pageable {
+public class RoomResponseDto {
     @ApiModelProperty(value="게임 방 아이디", example = "0", required = true)
     Long id;
     @ApiModelProperty(value="제목", example = "같이 게임 해요", required = true)

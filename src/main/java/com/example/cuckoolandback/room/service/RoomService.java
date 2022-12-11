@@ -36,7 +36,7 @@ public class RoomService {
 
         Page<Room> roomList = roomRepository.findAll(pageable);
 
-        List<RoomResponseDto> responseDtoList = (List<RoomResponseDto>) roomList.stream().map(room ->  RoomResponseDto.builder()
+        List<RoomResponseDto> responseDtoList = roomList.stream().map(room ->  RoomResponseDto.builder()
                         .id(room.getId())
                         .title(room.getTitle())
                         .state(room.getState())
