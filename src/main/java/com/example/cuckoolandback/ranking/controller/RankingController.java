@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,12 @@ public class RankingController {
     public ResponseEntity<List<RankingResponseDto>> getAllMafiaRanking() {
         return ResponseEntity.ok().body(rankingService.getAllMafiaRanking());
     }
+    @ApiOperation(value = "마피아 상세 랭킹 조회")
+    @GetMapping("/majority/{memberid}")
+    public ResponseEntity<RankingResponseDto> getOneMafiaRanking(@PathVariable String memberid){
+        return ResponseEntity.ok().body(rankingService.getOneMafiaRanking(memberid));
+    }
+
 
     @ApiOperation(value = "다수결 전체 랭킹 조회")
     @GetMapping("/majority/total")

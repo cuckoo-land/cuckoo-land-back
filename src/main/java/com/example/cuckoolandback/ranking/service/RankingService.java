@@ -1,10 +1,14 @@
 package com.example.cuckoolandback.ranking.service;
 
+import com.example.cuckoolandback.common.exception.CustomException;
+import com.example.cuckoolandback.common.exception.ErrorCode;
 import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
 import com.example.cuckoolandback.user.domain.Member;
+import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class RankingService {
 
@@ -27,6 +31,19 @@ public class RankingService {
             rankingResponseDtoList.add(rankingResponseDto);
         }
         return rankingResponseDtoList;
+    }
+
+    public RankingResponseDto getOneMafiaRanking(String memberid) {
+        Member member = memberRepository.findByMemberId(memberid)
+            .orElseThrow(() -> new CustomException(
+                ErrorCode.USER_NOT_FOUND));
+        RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+            .nickname(member.getNickname())
+            .tier(member.getMafiaTier())
+            .winNum(member.getMafiaWinNum())
+            .winScore(member.getMafiaWinScore())
+            .build();
+        return rankingResponseDto;
     }
 
     public List<RankingResponseDto> getAllMajorRanking() {
