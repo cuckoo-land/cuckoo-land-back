@@ -27,10 +27,10 @@ public class Member extends BaseTime {
     //랭킹 관련
     private String mafiaWinNum;
     private int mafiaWinScore;
-    private String mafiaTier;
+    private int mafiaTier;
     private String majorWinNum;
     private int majorWinScore;
-    private String majorTier;
+    private int majorTier;
 
     private String memo;
 
