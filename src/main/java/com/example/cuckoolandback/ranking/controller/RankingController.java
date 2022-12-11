@@ -24,4 +24,7 @@ public class RankingController {
     public ResponseEntity<List<RankingResponseDto>> getAllRanking() {
         return ResponseEntity.ok().body(rankingService.getAllMafiaRanking());
     }
+
+
+
 }

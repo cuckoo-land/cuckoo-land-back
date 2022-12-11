@@ -6,10 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RankingResponseDto {
-    private String mafiaWinNum;
-    private int mafiaWinScore;
-    private String mafiaTier;
-    private String majorWinNum;
-    private int majorWinScore;
-    private String majorTier;
+    private String nickname;
+    private int tier;
+    private String winNum;
+    private int winScore;
 }

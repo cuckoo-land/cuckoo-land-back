@@ -19,12 +19,10 @@ public class RankingService {
         List<Member> memberList = memberRepository.findTopByMafiaWinScore();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
-                .mafiaWinNum(member.getMafiaWinNum())
-                .majorWinScore(member.getMajorWinScore())
-                .mafiaTier(member.getMafiaTier())
-                .majorWinNum(member.getMajorWinNum())
-                .majorWinScore(member.getMajorWinScore())
-                .majorTier(member.getMajorTier())
+                .nickname(member.getNickname())
+                .tier(member.getMafiaTier())
+                .winNum(member.getMafiaWinNum())
+                .winScore(member.getMafiaWinScore())
                 .build();
             rankingResponseDtoList.add(rankingResponseDto);
         }
