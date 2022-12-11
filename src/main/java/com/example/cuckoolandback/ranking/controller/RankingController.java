@@ -27,7 +27,7 @@ public class RankingController {
     }
 
     @ApiOperation(value = "마피아 상세 랭킹 조회")
-    @GetMapping("/majority/{memberid}")
+    @GetMapping("/mafia/{memberid}")
     public ResponseEntity<RankingResponseDto> getOneMafiaRanking(@PathVariable String memberid) {
         return ResponseEntity.ok().body(rankingService.getOneMafiaRanking(memberid));
     }
@@ -38,6 +38,7 @@ public class RankingController {
     public ResponseEntity<List<RankingResponseDto>> getAllMajorRanking() {
         return ResponseEntity.ok().body(rankingService.getAllMajorRanking());
     }
+
     @ApiOperation(value = "다수결 상세 랭킹 조회")
     @GetMapping("/majority/{memberid}")
     public ResponseEntity<RankingResponseDto> getOneMajorRanking(@PathVariable String memberid) {

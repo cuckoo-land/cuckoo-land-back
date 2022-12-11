@@ -7,18 +7,18 @@ import com.example.cuckoolandback.user.domain.Member;
 import com.example.cuckoolandback.user.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class RankingService {
 
     private final MemberRepository memberRepository;
 
-    public RankingService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
-
     public List<RankingResponseDto> getAllMafiaRanking() {
         List<RankingResponseDto> rankingResponseDtoList = new ArrayList<>();
-        List<Member> memberList = memberRepository.findTopByMafiaWinScore();
+        List<Member> memberList = memberRepository.findFirst10ByOrderByMafiaWinScore();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
                 .nickname(member.getNickname())
@@ -46,7 +46,7 @@ public class RankingService {
 
     public List<RankingResponseDto> getAllMajorRanking() {
         List<RankingResponseDto> rankingResponseDtoList = new ArrayList<>();
-        List<Member> memberList = memberRepository.findTopByMajorWinScore();
+        List<Member> memberList = memberRepository.findFirst10ByOrderByMajorWinScore();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
                 .nickname(member.getNickname())
