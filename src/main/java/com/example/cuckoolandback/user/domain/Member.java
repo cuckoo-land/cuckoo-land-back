@@ -24,6 +24,16 @@ public class Member extends BaseTime {
 
     private String password;
 
+    //랭킹 관련
+    private String mafiaWinNum;
+    private int mafiaWinScore;
+    private int mafiaTier;
+    private String majorWinNum;
+    private int majorWinScore;
+    private int majorTier;
+
+    private String memo;
+
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
