@@ -18,7 +18,7 @@ public class RankingService {
 
     public List<RankingResponseDto> getAllMafiaRanking() {
         List<RankingResponseDto> rankingResponseDtoList = new ArrayList<>();
-        List<Member> memberList = memberRepository.findFirst10ByOrderByMafiaWinScore();
+        List<Member> memberList = memberRepository.findFirst10ByOrderByMafiaWinScoreDesc();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
                 .nickname(member.getNickname())
@@ -46,7 +46,7 @@ public class RankingService {
 
     public List<RankingResponseDto> getAllMajorRanking() {
         List<RankingResponseDto> rankingResponseDtoList = new ArrayList<>();
-        List<Member> memberList = memberRepository.findFirst10ByOrderByMajorWinScore();
+        List<Member> memberList = memberRepository.findFirst10ByOrderByMajorWinScoreDesc();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
                 .nickname(member.getNickname())

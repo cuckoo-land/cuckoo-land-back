@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByNickname(String nickname);
 
-    List<Member> findFirst10ByOrderByMafiaWinScore();
+    List<Member> findFirst10ByOrderByMafiaWinScoreDesc();
 
-    List<Member> findFirst10ByOrderByMajorWinScore();
+    List<Member> findFirst10ByOrderByMajorWinScoreDesc();
 }
