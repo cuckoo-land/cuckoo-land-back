@@ -6,10 +6,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 
 
 @ApiModel(value = "게임 방 객체", description = "게임 룸 생성을 위한 객체")
 @Getter
+@Setter
 @Builder
 public class RoomResponseDto {
     @ApiModelProperty(value="게임 방 아이디", example = "0", required = true)

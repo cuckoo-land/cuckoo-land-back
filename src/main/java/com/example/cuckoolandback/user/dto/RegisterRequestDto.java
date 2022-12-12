@@ -17,7 +17,7 @@ public class RegisterRequestDto {
 
     @ApiModelProperty(value="닉네임", example = "뻐꾹이1", required = true)
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
-    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z-0-9]{4,16}$", message = "닉네임은 특수문자를 제외한 4~16자리여야 합니다.")
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z-0-9]{2,16}$", message = "닉네임은 특수문자를 제외한 2~16자리여야 합니다.")
     private String nickname;
 
     @ApiModelProperty(value="비밀번호", example = "Abcd123!", required = true)

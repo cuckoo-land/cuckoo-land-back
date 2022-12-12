@@ -25,6 +25,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -35,6 +36,7 @@ public class MemberService {
         dupleIdCheck(idRequestDto.getMemberId());
         return Message.AVAILABLE_ID.getMsg();
     }
+
     public String nickCheck(NickRequestDto registerDto) {
         //중복 닉네임 체크
         dupleNickCheck(registerDto.getNickname());
@@ -53,25 +55,34 @@ public class MemberService {
                 .nickname(registerDto.getNickname())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
+                .mafiaWinNum(null)
+                .mafiaWinScore(0)
+                .mafiaTier(0)
+                .majorTotal(0)
+                .mafiaWinNum(null)
+                .majorWinScore(0)
+                .majorTier(0)
+                .majorTotal(0)
                 .build();
+
 
         memberRepository.save(member);
 
         return MemberResponseDto.builder()
-                .memberId(member.getMemberId())
-                .nickname(member.getNickname())
-                .roleType(member.getRoleType())
-                .build();
+            .memberId(member.getMemberId())
+            .nickname(member.getNickname())
+            .roleType(member.getRoleType())
+            .build();
     }
 
     private void dupleIdCheck(String memberId) {
-        if(memberRepository.findByMemberId(memberId).isPresent()){
+        if (memberRepository.findByMemberId(memberId).isPresent()) {
             throw new CustomException(ErrorCode.DUPLE_ID);
         }
     }
 
     private void dupleNickCheck(String nickname) {
-        if(memberRepository.findByNickname(nickname).isPresent()){
+        if (memberRepository.findByNickname(nickname).isPresent()) {
             throw new CustomException(ErrorCode.DUPLE_NICKNAME);
         }
     }
@@ -80,7 +91,7 @@ public class MemberService {
     public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 가입 회원 여부 체크
         Member member = memberRepository.findByMemberId(loginRequestDto.getMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_ID_PWD));
+            .orElseThrow(() -> new CustomException(ErrorCode.CONFIRM_ID_PWD));
 
         // 비밀번호 체크
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
@@ -98,42 +109,46 @@ public class MemberService {
             // DB에 refresh 토큰 업데이트
             refreshToken.get().updateToken(tokenDto.getRefreshToken());
         }
-        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),"Bearer " + tokenDto.getAuthorization());
+        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),
+            "Bearer " + tokenDto.getAuthorization());
         response.addHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
 
         return MemberResponseDto.builder()
-                .memberId(member.getMemberId())
-                .nickname(member.getNickname())
-                .roleType(member.getRoleType())
-                .build();
+            .memberId(member.getMemberId())
+            .nickname(member.getNickname())
+            .roleType(member.getRoleType())
+            .build();
     }
 
     @Transactional
-    public MemberResponseDto loginGuest(NickRequestDto nickRequestDto,HttpServletResponse response) {
+    public MemberResponseDto loginGuest(NickRequestDto nickRequestDto,
+        HttpServletResponse response) {
         dupleNickCheck(nickRequestDto.getNickname());
         Member guest = Member.builder()
-                .memberId("Guest"+System.currentTimeMillis())
-                .nickname(nickRequestDto.getNickname())
-                .password(passwordEncoder.encode("pwd"+ UUID.randomUUID()))
-                .roleType(RoleType.GUEST)
-                .build();
+            .memberId("Guest" + System.currentTimeMillis())
+            .nickname(nickRequestDto.getNickname())
+            .password(passwordEncoder.encode("pwd" + UUID.randomUUID()))
+            .roleType(RoleType.GUEST)
+            .build();
         memberRepository.save(guest);
         TokenDto tokenDto = jwtProvider.generateTokenDto(guest);
         refreshTokenRepository.saveAndFlush(new RefreshToken(guest, tokenDto.getRefreshToken()));
 
-        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),"Bearer " + tokenDto.getAuthorization());
+        response.addHeader(Message.JWT_HEADER_NAME.getMsg(),
+            "Bearer " + tokenDto.getAuthorization());
         response.addHeader(Message.REFRESH_HEADER_NAME.getMsg(), tokenDto.getRefreshToken());
 
         return MemberResponseDto.builder()
-                .memberId(guest.getMemberId())
-                .nickname(guest.getNickname())
-                .roleType(guest.getRoleType())
-                .build();
+            .memberId(guest.getMemberId())
+            .nickname(guest.getNickname())
+            .roleType(guest.getRoleType())
+            .build();
     }
 
     @Transactional
     public String logoutGuest() {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
         memberRepository.deleteById(principal.getMember().getSeq());
         refreshTokenRepository.deleteByMemberId(principal.getMember().getMemberId());
         return Message.LOGOUT_SUCCESS.getMsg();
@@ -145,9 +160,10 @@ public class MemberService {
 
     @Transactional
     public String updateNickname(NickRequestDto requestDto) {
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
         Member member = memberRepository.findById(principal.getMember().getSeq())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         member.updateNickname(requestDto.getNickname());
         memberRepository.save(member);
         return Message.UPDATE_NICKNAME_SUCCESS.getMsg();
