@@ -9,5 +9,7 @@ public class RankingResponseDto {
     private String nickname;
     private int tier;
     private String winNum;
+    private int total;
     private int winScore;
+    private String memo;
 }

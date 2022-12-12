@@ -27,7 +27,9 @@ public class RankingService {
                 .nickname(member.getNickname())
                 .tier(member.getMafiaTier())
                 .winNum(member.getMafiaWinNum())
+                .total(member.getMafiaTotal())
                 .winScore(member.getMafiaWinScore())
+                .memo(member.getMemo())
                 .build();
             rankingResponseDtoList.add(rankingResponseDto);
         }
@@ -41,7 +43,9 @@ public class RankingService {
             .nickname(member.getNickname())
             .tier(member.getMafiaTier())
             .winNum(member.getMafiaWinNum())
+            .total(member.getMafiaTotal())
             .winScore(member.getMafiaWinScore())
+            .memo(member.getMemo())
             .build();
         return rankingResponseDto;
     }
@@ -54,7 +58,9 @@ public class RankingService {
                 .nickname(member.getNickname())
                 .tier(member.getMajorTier())
                 .winNum(member.getMajorWinNum())
+                .total(member.getMajorTotal())
                 .winScore(member.getMajorWinScore())
+                .memo(member.getMemo())
                 .build();
             rankingResponseDtoList.add(rankingResponseDto);
         }
@@ -68,7 +74,9 @@ public class RankingService {
             .nickname(member.getNickname())
             .tier(member.getMajorTier())
             .winNum(member.getMajorWinNum())
+            .total(member.getMajorTotal())
             .winScore(member.getMajorWinScore())
+            .memo(member.getMemo())
             .build();
         return rankingResponseDto;
     }
