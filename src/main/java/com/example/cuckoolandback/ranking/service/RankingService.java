@@ -24,6 +24,7 @@ public class RankingService {
         List<Member> memberList = memberRepository.findFirst10ByOrderByMafiaWinScoreDesc();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+                .memberId(member.getMemberId())
                 .nickname(member.getNickname())
                 .tier(member.getMafiaTier())
                 .winNum(member.getMafiaWinNum())
@@ -40,6 +41,7 @@ public class RankingService {
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+            .memberId(member.getMemberId())
             .nickname(member.getNickname())
             .tier(member.getMafiaTier())
             .winNum(member.getMafiaWinNum())
@@ -55,6 +57,7 @@ public class RankingService {
         List<Member> memberList = memberRepository.findFirst10ByOrderByMajorWinScoreDesc();
         for (Member member : memberList) {
             RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+                .memberId(member.getMemberId())
                 .nickname(member.getNickname())
                 .tier(member.getMajorTier())
                 .winNum(member.getMajorWinNum())
@@ -71,6 +74,7 @@ public class RankingService {
             .orElseThrow(() -> new CustomException(
                 ErrorCode.USER_NOT_FOUND));
         RankingResponseDto rankingResponseDto = RankingResponseDto.builder()
+            .memberId(member.getMemberId())
             .nickname(member.getNickname())
             .tier(member.getMajorTier())
             .winNum(member.getMajorWinNum())
