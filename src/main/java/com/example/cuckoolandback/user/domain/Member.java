@@ -31,7 +31,6 @@ public class Member extends BaseTime {
     private String majorWinNum;
     private int majorWinScore;
     private int majorTier;
-
     private String memo;
 
     @Enumerated(EnumType.STRING)
