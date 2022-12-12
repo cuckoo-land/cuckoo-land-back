@@ -53,6 +53,14 @@ public class MemberService {
                 .nickname(registerDto.getNickname())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
+                .mafiaWinNum(null)
+                .mafiaWinScore(0)
+                .mafiaTier(0)
+                .majorTotal(0)
+                .mafiaWinNum(null)
+                .majorWinScore(0)
+                .majorTier(0)
+                .majorTotal(0)
                 .build();
 
         memberRepository.save(member);

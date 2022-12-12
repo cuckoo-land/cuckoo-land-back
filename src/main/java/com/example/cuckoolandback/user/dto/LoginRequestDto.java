@@ -13,7 +13,7 @@ public class LoginRequestDto {
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
     private String memberId;
 
-    @ApiModelProperty(value="비밀번호", example = "Abcd123", required = true)
+    @ApiModelProperty(value="비밀번호", example = "Abcd123!", required = true)
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String password;
 }
