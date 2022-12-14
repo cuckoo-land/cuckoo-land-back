@@ -74,7 +74,7 @@ public class RoomService {
     public RoomResponseDto createRoom(RoomRequestDto roomRequestDto) {
 
         Room room = Room.builder()
-                .code(UUID.randomUUID().toString())
+                .code(UUID.randomUUID().toString().substring(0,8))
                 .title(roomRequestDto.getTitle())
                 .hostId(roomRequestDto.getHostId())
                 .type(roomRequestDto.getType())
