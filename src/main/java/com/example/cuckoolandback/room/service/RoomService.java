@@ -71,10 +71,9 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomResponseDto createRoom(RoomRequestDto roomRequestDto) {
-
+    public RoomResponseDto createRoom(RoomRequestDto roomRequestDto){
         Room room = Room.builder()
-                .code(UUID.randomUUID().toString())
+                .code(UUID.randomUUID().toString().substring(0,8))
                 .title(roomRequestDto.getTitle())
                 .hostId(roomRequestDto.getHostId())
                 .type(roomRequestDto.getType())
@@ -84,12 +83,20 @@ public class RoomService {
                 .password(passwordEncoder.encode(roomRequestDto.getPassword()))
                 .build();
 
-        roomRepository.save(room);
+        if(roomRepository.findRoomByCode(room.getCode()).isPresent()){
+            throw new CustomException(ErrorCode.DUPLICATE_CODE);
+        }
 
-        participantRepository.save(Participant.builder()
-                        .id(roomRequestDto.getHostId())
-                        .roomId(room.getId())
-                .build());
+        try{
+            roomRepository.save(room);
+            participantRepository.save(Participant.builder()
+                    .id(roomRequestDto.getHostId())
+                    .roomId(room.getId())
+                    .build());
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.CREATE_FAILED);
+        }
+
 
         return RoomResponseDto.builder()
                 .id(room.getId())
