@@ -7,7 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum GameType {
 
-    MAFIA("MAFIA", "마피아");
+    MAFIA("Find the Cuckoo", "마피아"),
+    MAJORITY("Cuckoo's Pick", "다수결게임");
+
     private final String code;
     private final String name;
 }
