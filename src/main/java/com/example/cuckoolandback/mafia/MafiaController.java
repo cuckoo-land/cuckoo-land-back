@@ -3,8 +3,11 @@ package com.example.cuckoolandback.mafia;
 import com.example.cuckoolandback.common.Message;
 import com.example.cuckoolandback.common.exception.CustomException;
 import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
+import com.example.cuckoolandback.room.repository.ParticipantRepository;
 import com.example.cuckoolandback.room.repository.RoomRepository;
+import com.example.cuckoolandback.user.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,12 +15,17 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
+import javax.transaction.Transactional;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Controller
 public class MafiaController {
 
     private final RoomRepository roomRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ParticipantRepository participantRepository;
+    private final MemberRepository memberRepository;
 
 
     @MessageMapping("/mafia/{roomId}")
@@ -45,21 +53,31 @@ public class MafiaController {
         }
     }
 
-    private void gameEnter(GameMessage message) {
-        // ROOM 접속한 사람들 정보(멤버 정보) 취합하여 리턴
+    @Transactional
+    public void gameEnter(GameMessage message) {
         Long roomID = message.getRoomId();
         Room room = roomRepository.findById(roomID).orElseThrow(
                 () -> new CustomException(ErrorCode.ROOMS_NOT_FOUND)
         );
-        // 토큰값으로 메시지 전달자 정보 확인해서 DB에 반영?
-        String userListMessage = null;
+        participantRepository.save(
+                Participant.builder()
+                        .id(message.getSender())
+                        .roomId(roomID)
+                        .build());
+
+        List<Participant> participants = participantRepository.findByRoomId(roomID);
+
+        StringBuilder content= new StringBuilder();
+        for(Participant participant:participants){
+            content.append(participant.getId()).append(" ");
+        }
 
         GameMessage gameMessage = new GameMessage();
         gameMessage.setRoomId(roomID);
         gameMessage.setSender(Message.SERVER_NOTICE.getMsg());
-        gameMessage.setContent(userListMessage);
+        gameMessage.setContent(content.toString());
         gameMessage.setType(GameMessage.MessageType.SERVER);
-        messagingTemplate.convertAndSend("/sub/mafia/" + message.getRoomId(), gameMessage);
+        messagingTemplate.convertAndSend("/topic/mafia/" + message.getRoomId(), gameMessage);
     }
 
     private void gameStart(GameMessage message) {
@@ -96,6 +114,5 @@ public class MafiaController {
         // player 정보 초기화
         // 방 정보 초기화
         // 승률과 승점 계산하여 member정보 DB반영
-
     }
 }
