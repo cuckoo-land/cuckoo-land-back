@@ -9,7 +9,6 @@ import com.example.cuckoolandback.majority.dto.*;
 import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
-import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;
 import com.example.cuckoolandback.room.dto.MessageResponseDto;
@@ -17,14 +16,10 @@ import com.example.cuckoolandback.room.repository.ParticipantRepository;
 import com.example.cuckoolandback.room.repository.RoomRepository;
 import com.example.cuckoolandback.room.service.RoomService;
 import com.example.cuckoolandback.user.domain.Member;
-import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.dto.MemberResponseDto;
 import com.example.cuckoolandback.user.repository.MemberRepository;
-import com.example.cuckoolandback.websocket.dto.ChatMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,4 +32,5 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MajorityService {
     private final SimpMessageSendingOperations sendingOperations;
+    final String PATH = "/topic/majority/";
 }
