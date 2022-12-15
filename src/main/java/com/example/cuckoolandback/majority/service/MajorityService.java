@@ -36,5 +36,18 @@ public class MajorityService {
     public Optional<Majority> getRandom() {
         return majorityRepository.findMajorityByRandom();
     }
+
     final String PATH = "/topic/majority/";
+
+    public Room findRoom(Long roomId) {
+        Optional<Room> roomOptional = roomRepository.findById(roomId);
+
+        if (roomOptional.isEmpty()) {
+            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND ROOM").build();
+            sendingOperations.convertAndSend(PATH + roomId, message);
+            throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
+        }
+
+        return roomOptional.get();
+    }
 }
