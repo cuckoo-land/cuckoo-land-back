@@ -289,13 +289,14 @@ public class MajorityService {
         }
 
         Participant participant = participantOptional.get();
-        if(participant.isHostTF()){
+        boolean isHost = participant.isHostTF();
+        participantRepository.delete(participant);
+
+        if(isHost){
             Participant host = participantRepository.findFirstByRoomId(roomId);
             host.setHostTF(true);
             participantRepository.save(host);
         }
-
-        participantRepository.delete(participant);
 
     }
 }
