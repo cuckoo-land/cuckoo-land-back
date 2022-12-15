@@ -223,6 +223,9 @@ public class MajorityService {
         }
 
         Member member = memberOptional.get();
+
+        removeParticipant(requestDto.getNickname(), requestDto.getRoomId());
+
         ChatResponseDto message = ChatResponseDto
                 .builder()
                 .sender(requestDto.getNickname())
@@ -266,4 +269,33 @@ public class MajorityService {
                 .build());
     }
 
+    public void removeParticipant(String id, Long roomId){
+        int numOfParticipant = participantRepository.numOfParticipants(roomId);
+        if(numOfParticipant ==1){
+            roomRepository.deleteById(roomId);
+            participantRepository.deleteById(id);
+            return;
+        }
+
+        Optional<Participant> participantOptional = participantRepository.findById(id);
+        if(participantOptional.isEmpty()){
+            MajorityMessage message = MajorityMessage
+                    .builder()
+                    .message("NOT FOUND PARTICIPANT")
+                    .type(SendType.EXIT)
+                    .build();
+            sendingOperations.convertAndSend(PATH + roomId, message);
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        Participant participant = participantOptional.get();
+        if(participant.isHostTF()){
+            Participant host = participantRepository.findFirstByRoomId(roomId);
+            host.setHostTF(true);
+            participantRepository.save(host);
+        }
+
+        participantRepository.delete(participant);
+
+    }
 }
