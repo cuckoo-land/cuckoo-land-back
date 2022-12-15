@@ -32,5 +32,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MajorityService {
     private final SimpMessageSendingOperations sendingOperations;
+    private final MajorityRepository majorityRepository;
+    public Optional<Majority> getRandom() {
+        return majorityRepository.findMajorityByRandom();
+    }
     final String PATH = "/topic/majority/";
 }
