@@ -30,4 +30,11 @@ public class MajorityController {
         majorityService.round(requestDto);
     }
 
+    @ApiOperation(value = "다수결 게임 목록 불러오기")
+    @GetMapping("/api/majority")
+    public ResponseEntity<List<MajorityResponseDto>> getAllMajority() {
+        return ResponseEntity.ok()
+                .body(majorityService.getAllMajority());
+    }
+
 }

@@ -157,4 +157,13 @@ public class MajorityService {
         vsRepository.save(vs);
     }
 
+    @Transactional
+    public List<MajorityResponseDto> getAllMajority() {
+        List<Majority> majorityList = majorityRepository.findAll();
+        return majorityList.stream().map(majority -> MajorityResponseDto.builder()
+                .id(majority.getId())
+                .title(majority.getTitle())
+                .build()).collect(Collectors.toList());
+    }
+
 }
