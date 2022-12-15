@@ -10,4 +10,9 @@ import java.util.List;
 
 public interface PictureRepository extends JpaRepository<Picture,Long> {
 
+    @Query(value = "SELECT * FROM picture\n" +
+            "WHERE majority_id = :majorityId\n"+
+            "ORDER BY RAND()",
+            nativeQuery = true)
+    List<Picture> findPicturesByRandom(@Param("majorityId") Long majorityId);
 }

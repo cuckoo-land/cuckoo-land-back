@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 public class MajorityService {
     private final SimpMessageSendingOperations sendingOperations;
     private final MajorityRepository majorityRepository;
+    private final PictureRepository pictureRepository;
+    private final RoomRepository roomRepository;
+    private final RoomService roomService;
+    private final VsRepository vsRepository;
     public Optional<Majority> getRandom() {
         return majorityRepository.findMajorityByRandom();
     }
@@ -49,5 +53,61 @@ public class MajorityService {
         }
 
         return roomOptional.get();
+    }
+
+    @Transactional
+    public void start(MajorityRequestDto requestDto) {
+        Optional<Majority> majority;
+        List<Picture> pictures;
+        int roundTotal = 0;
+        Room room = findRoom(requestDto.getRoomId());
+        switch (requestDto.getRound()) {
+            case THIRTYTWO:
+                roundTotal = 32;
+                break;
+
+            case SIXTYFOUR:
+                roundTotal = 64;
+                break;
+        }
+        if (requestDto.getGameType() == 0) {
+            majority = getRandom();
+        } else {
+            majority = majorityRepository.findById(requestDto.getGameType());
+        }
+
+        if (majority.isPresent()) {
+            pictures = pictureRepository.findPicturesByRandom(majority.get().getId());
+            List<Vs> vsList = new ArrayList<>();
+            for (int i = 0; i < roundTotal / 2; i++) {
+                Vs vs = new Vs();
+                vs.setItemId1(pictures.get(2 * i).getId());
+                vs.setItemId2(pictures.get(2 * i + 1).getId());
+                vs.setRoundNum(roundTotal - i);
+                vs.setRoomId(requestDto.getRoomId());
+
+                vsList.add(vs);
+
+                if (pictures.size() / 2 <= i + 1) break;
+            }
+            room.setState(RoomStatus.PLAYING);
+            roomRepository.save(room);
+
+            GameResponseDto responseDto = GameResponseDto.builder()
+                    .title(majority.get().getTitle())
+                    .numOfPeople(roomService.getNumOfPeople(requestDto.getRoomId()))
+                    .maximum(room.getMaximum())
+                    .totalRound(roundTotal)
+                    .build();
+
+            vsRepository.saveAll(vsList);
+
+            sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), responseDto);
+
+        } else {
+            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND DATA").build();
+            sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
+        }
+
     }
 }

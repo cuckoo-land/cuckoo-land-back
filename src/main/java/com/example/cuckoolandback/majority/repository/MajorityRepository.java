@@ -7,4 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface MajorityRepository extends JpaRepository<Majority, Long> {
+    @Query(value = "SELECT * FROM majority\n" +
+            "ORDER BY RAND() LIMIT 1",
+            nativeQuery = true)
+    Optional<Majority> findMajorityByRandom();
 }
