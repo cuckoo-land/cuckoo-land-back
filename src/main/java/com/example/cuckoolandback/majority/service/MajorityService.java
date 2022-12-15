@@ -9,9 +9,11 @@ import com.example.cuckoolandback.majority.dto.*;
 import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
+import com.example.cuckoolandback.room.domain.GameType;
+import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;
-import com.example.cuckoolandback.room.dto.MessageResponseDto;
+
 import com.example.cuckoolandback.room.repository.ParticipantRepository;
 import com.example.cuckoolandback.room.repository.RoomRepository;
 import com.example.cuckoolandback.room.service.RoomService;
@@ -46,11 +48,13 @@ public class MajorityService {
 
     final String PATH = "/topic/majority/";
 
-    public Room findRoom(Long roomId) {
+    public Room findRoom(Long roomId, SendType type) {
         Optional<Room> roomOptional = roomRepository.findById(roomId);
 
         if (roomOptional.isEmpty()) {
-            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND ROOM").build();
+            MajorityMessage message = MajorityMessage.builder()
+                    .type(type)
+                    .message("NOT FOUND ROOM").build();
             sendingOperations.convertAndSend(PATH + roomId, message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
@@ -63,7 +67,7 @@ public class MajorityService {
         Optional<Majority> majority;
         List<Picture> pictures;
         int roundTotal = 0;
-        Room room = findRoom(requestDto.getRoomId());
+        Room room = findRoom(requestDto.getRoomId(),SendType.START);
         switch (requestDto.getRound()) {
             case THIRTYTWO:
                 roundTotal = 32;
@@ -108,7 +112,9 @@ public class MajorityService {
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), responseDto);
 
         } else {
-            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND DATA").build();
+            MajorityMessage message = MajorityMessage.builder()
+                    .type(SendType.START)
+                    .message("NOT FOUND DATA").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
         }
 
@@ -172,7 +178,9 @@ public class MajorityService {
     public void enter(EnterRequestDto requestDto) {
         Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
         if (memberOptional.isEmpty()) {
-            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND Member").build();
+            MajorityMessage message = MajorityMessage.builder()
+                    .type(SendType.ENTER)
+                    .message("NOT FOUND Member").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
@@ -185,6 +193,7 @@ public class MajorityService {
                 .build();
 
         Member member = memberOptional.get();
+
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), EnterResponseDto
                 .builder()
                 .member(MemberResponseDto.builder()
@@ -203,7 +212,10 @@ public class MajorityService {
     public void exit(EnterRequestDto requestDto) {
         Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
         if (memberOptional.isEmpty()) {
-            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND Member").build();
+            MajorityMessage message = MajorityMessage
+                    .builder()
+                    .type(SendType.EXIT)
+                    .message("NOT FOUND Member").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
