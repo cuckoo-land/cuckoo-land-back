@@ -194,6 +194,8 @@ public class MajorityService {
 
         Member member = memberOptional.get();
 
+        addParticipant(requestDto.getNickname(), requestDto.getRoomId());
+
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), EnterResponseDto
                 .builder()
                 .member(MemberResponseDto.builder()
@@ -239,4 +241,29 @@ public class MajorityService {
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
 
     }
+
+    @Transactional
+    public void addParticipant(String id, Long roomId){
+        Room room = findRoom(roomId,SendType.ENTER);
+        int numOfParticipant = participantRepository.numOfParticipants(roomId);
+        if(room.getMaximum() <= numOfParticipant){
+            MajorityMessage message = MajorityMessage
+                    .builder()
+                    .message("ALREADY FULL")
+                    .type(SendType.ENTER)
+                    .build();
+            sendingOperations.convertAndSend(PATH + roomId, message);
+            throw new CustomException(ErrorCode.CHECK_FAILED);
+        }else if(room.getMaximum()-1 ==numOfParticipant){
+            room.setState(RoomStatus.FULL);
+            roomRepository.save(room);
+        }
+
+        participantRepository.save(Participant.builder()
+                .roomId(roomId)
+                .id(id)
+                .hostTF(false)
+                .build());
+    }
+
 }
