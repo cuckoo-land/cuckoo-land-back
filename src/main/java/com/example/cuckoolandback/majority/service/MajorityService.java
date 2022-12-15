@@ -199,4 +199,32 @@ public class MajorityService {
     public void chat(ChatResponseDto message) {
         sendingOperations.convertAndSend(PATH + message.getRoomId(), message);
     }
+
+    public void exit(EnterRequestDto requestDto) {
+        Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
+        if (memberOptional.isEmpty()) {
+            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND Member").build();
+            sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
+            throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
+        }
+
+        Member member = memberOptional.get();
+        ChatResponseDto message = ChatResponseDto
+                .builder()
+                .sender(requestDto.getNickname())
+                .message(requestDto.getNickname() + "님이 퇴장하였습니다.")
+                .roomId(requestDto.getRoomId())
+                .build();
+
+        sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), ExitResponseDto
+                .builder()
+                .member(MemberResponseDto.builder()
+                        .memberId(member.getMemberId())
+                        .nickname(member.getNickname())
+                        .roleType(member.getRoleType())
+                        .build())
+                .build());
+        sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
+
+    }
 }

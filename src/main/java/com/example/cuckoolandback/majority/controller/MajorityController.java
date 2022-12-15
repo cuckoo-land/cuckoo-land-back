@@ -36,6 +36,12 @@ public class MajorityController {
         majorityService.round(requestDto);
     }
 
+    //방 나가기
+    @MessageMapping("/majority/exit")
+    public void start(EnterRequestDto requestDto) {
+        majorityService.exit(requestDto);
+    }
+
     //채팅
     @MessageMapping("/majority/chat")
     public void chat(ChatResponseDto message) {
