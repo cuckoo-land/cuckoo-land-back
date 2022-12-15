@@ -38,6 +38,8 @@ public class MajorityService {
     private final RoomService roomService;
     private final VsRepository vsRepository;
     private final ParticipantRepository participantRepository;
+    private final MemberRepository memberRepository;
+
     public Optional<Majority> getRandom() {
         return majorityRepository.findMajorityByRandom();
     }
@@ -164,6 +166,34 @@ public class MajorityService {
                 .id(majority.getId())
                 .title(majority.getTitle())
                 .build()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void enter(EnterRequestDto requestDto) {
+        Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
+        if (memberOptional.isEmpty()) {
+            MessageResponseDto message = MessageResponseDto.builder().message("NOT FOUND Member").build();
+            sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
+            throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
+        }
+
+        ChatResponseDto message = ChatResponseDto
+                .builder()
+                .sender(requestDto.getNickname())
+                .message(requestDto.getNickname() + "님이 입장하였습니다.")
+                .roomId(requestDto.getRoomId())
+                .build();
+
+        Member member = memberOptional.get();
+        sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), EnterResponseDto
+                .builder()
+                .member(MemberResponseDto.builder()
+                        .memberId(member.getMemberId())
+                        .nickname(member.getNickname())
+                        .roleType(member.getRoleType())
+                        .build())
+                .build());
+        sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
     }
 
     public void chat(ChatResponseDto message) {

@@ -18,6 +18,12 @@ public class MajorityController {
 
     private final MajorityService majorityService;
 
+    //방 입장
+    @MessageMapping("/majority/enter")
+    public void enter(EnterRequestDto requestDto) {
+        majorityService.enter(requestDto);
+    }
+
     //방 정보로 주제선택 후 해당 주제에 관련된 사진 나눠서 DB에 저장
     @MessageMapping("/majority/start")
     public void start(MajorityRequestDto requestDto) {
