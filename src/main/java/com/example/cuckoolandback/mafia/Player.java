@@ -13,12 +13,10 @@ import javax.persistence.*;
 public class Player {
 
     @Id
-    private Long id;
-
-    @Column
     private String memberId;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column
@@ -33,11 +31,15 @@ public class Player {
     @Column
     private int missionCnt;
 
+    @Column
+    private int voteCnt;
+
     public Player(Participant participant){
         this.memberId = participant.getId();
         this.roomId = participant.getRoomId();
         this.isDead = false;
-        this.haveRight = true;
+        this.haveRight = false;
         this.missionCnt = 0;
+        this.voteCnt = 0;
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 
-public interface ParticipantRepository extends JpaRepository<Participant,Long> {
+public interface ParticipantRepository extends JpaRepository<Participant,String> {
 
     List<Participant> findByRoomId(Long roomid);
     @Query(value = "SELECT COUNT(*) FROM participant\n" +

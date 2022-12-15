@@ -36,6 +36,9 @@ public class MafiaController {
         if (GameMessage.MessageType.ENTER.equals(message.getType())) {
             gameEnter(message);
         }
+        if (GameMessage.MessageType.LEAVE.equals(message.getType())) {
+            gameLeave(message);
+        }
         if (GameMessage.MessageType.START.equals(message.getType())) {
             gameStart(message);
         }
@@ -44,6 +47,9 @@ public class MafiaController {
         }
         if (GameMessage.MessageType.MISSION.equals(message.getType())) {
             gameMission(message);
+        }
+        if (GameMessage.MessageType.FAILMISSION.equals(message.getType())) {
+            gameFailMission(message);
         }
         if (GameMessage.MessageType.VOTE.equals(message.getType())) {
             gameVote(message);
@@ -90,6 +96,27 @@ public class MafiaController {
     }
 
     @Transactional
+    public void gameLeave(GameMessage message) {
+        Long roomID = message.getRoomId();
+        roomRepository.findById(roomID).orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
+        participantRepository.deleteById(message.getSender());
+
+        List<Participant> participants = participantRepository.findByRoomId(roomID);
+
+        StringBuilder content= new StringBuilder();
+        for(Participant participant:participants){
+            content.append(participant.getId()).append(" ");
+        }
+
+        GameMessage gameMessage = new GameMessage();
+        gameMessage.setRoomId(roomID);
+        gameMessage.setSender(Message.SERVER_NOTICE.getMsg());
+        gameMessage.setContent(content.toString());
+        gameMessage.setType(GameMessage.MessageType.SERVER);
+        messagingTemplate.convertAndSend("/topic/mafia/" + message.getRoomId(), gameMessage);
+    }
+
+    @Transactional
     public void gameStart(GameMessage message) {
         // ROOM 접속한 사람들 정보 취합하여 리턴(플레이어 정보 - 각각에게 역할 전달, 마피아에게 미션전달)
         Long roomID = message.getRoomId();
@@ -98,14 +125,19 @@ public class MafiaController {
         if(cnt <5){
             throw new CustomException(ErrorCode.PLAYERS_LACK);
         }
-        List<Role> roles =
+        List<Role> roleList =
                 Arrays.asList(
                         Role.MAFIA,
                         Role.CITIZEN,
+                        Role.CITIZEN,
+                        Role.CITIZEN,
+                        Role.CITIZEN,
+                        Role.POLICE,
+                        Role.MAFIA,
                         Role.DOCTOR,
-                        Role.CITIZEN,
-                        Role.CITIZEN,
+                        Role.MAFIA,
                         Role.CITIZEN);
+        List<Role> roles = roleList.subList(0,cnt);
         Collections.shuffle(roles);
 
         List<Player> playerList = new ArrayList<>();
@@ -127,10 +159,10 @@ public class MafiaController {
 
             StringBuilder content= new StringBuilder();
             if(player.getRole().equals(Role.MAFIA)){
-                content.append("미션 키워드").append("지금");
+                content.append("미션 키워드").append(", ").append("지금");
             }
-            gameMessage.setContent(player.getId()+":"+ player.getRole()+":"+content);
-            messagingTemplate.convertAndSend("/topic/mafia/" + player.getId(), gameMessage);
+            gameMessage.setContent(player.getMemberId()+":"+ player.getRole()+":"+content);
+            messagingTemplate.convertAndSend("/topic/mafia/" + player.getMemberId(), gameMessage);
         }
         GameMessage gameMessage = new GameMessage();
         gameMessage.setRoomId(roomID);
@@ -167,22 +199,70 @@ public class MafiaController {
         GameMessage gameMessage = new GameMessage();
         gameMessage.setSender(Message.SERVER_NOTICE.getMsg());
         mafia.setMissionCnt(mafia.getMissionCnt()+1);
+        playerRepository.save(mafia);
+        gameMessage.setRoomId(message.getRoomId());
         gameMessage.setContent(mafia.getMissionCnt()+"번 성공");
-        messagingTemplate.convertAndSend("/topic/mafia/" + mafia.getId(), gameMessage);
+        gameMessage.setType(GameMessage.MessageType.SERVER);
+        messagingTemplate.convertAndSend("/topic/mafia/" + mafia.getMemberId(), gameMessage);
 
         if(mafia.getMissionCnt()==3){
             mafia.setHaveRight(true);
+            playerRepository.save(mafia);
             gameMessage.setContent("MISSION COMPLETE");
             gameMessage.setType(GameMessage.MessageType.SERVER);
-            messagingTemplate.convertAndSend("/topic/mafia/" + mafia.getId(), gameMessage);
+            messagingTemplate.convertAndSend("/topic/mafia/" + mafia.getMemberId(), gameMessage);
         }
     }
 
-    private void gameVote(GameMessage message) {
-        // 프론트에서 전체 투표 취합 후 전달 시 낮에서 밤으로 상태 변경 메시지 전달
+    private void gameFailMission(GameMessage message) {
         GameMessage gameMessage = new GameMessage();
+
+        List<Player> players = playerRepository.findByRoleAndRoomId(Role.CITIZEN, message.getRoomId());
+        Collections.shuffle(players);
+
+        gameMessage.setRoomId(message.getRoomId());
+        gameMessage.setType(GameMessage.MessageType.SERVER);
+        gameMessage.setContent("마피아는 " + gameMessage.getSender()+" 입니다.");
+        messagingTemplate.convertAndSend("/topic/mafia/" + players.get(0).getMemberId(), gameMessage);
+    }
+
+
+    private void gameVote(GameMessage message) {
+
+        Player player = playerRepository.findByMemberId(message.getContent()).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+        player.setVoteCnt(player.getVoteCnt()+1);
+        playerRepository.save(player);
+        // 프론트에서 전체 투표 취합 후 대상 응답
+        GameMessage gameMessage = new GameMessage();
+        int totalVote = 0;
+        int max = 0;
+        List<String> result = new ArrayList<>();
+        List<Player> players = playerRepository.findByRoomId(message.getRoomId());
+        for (Player player1 : players) {
+            if (max < player1.getVoteCnt()) {
+                max = player1.getVoteCnt();
+                result.clear();
+                result.add(player1.getMemberId());
+            } else if (max == player1.getVoteCnt()) {
+                result.add(player1.getMemberId());
+            }
+            totalVote = totalVote + player1.getVoteCnt();
+        }
+        if (totalVote == players.size()) {
+            gameMessage.setContent(String.join(", ", result));
+            if (result.size() == 1) {
+                Player player2 = playerRepository.findByMemberId(result.get(0)).orElseThrow(
+                        () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+                );
+                player2.setDead(true);
+                playerRepository.save(player2);
+                gameMessage.setContent(player2.getMemberId()+"님이 사망하셨습니다.");
+            }
+        }
+
         gameMessage.setSender(Message.SERVER_NOTICE.getMsg());
-        gameMessage.setContent("NIGHT START");
         gameMessage.setType(GameMessage.MessageType.SERVER);
         messagingTemplate.convertAndSend("/topic/mafia/" + message.getRoomId(), message);
     }
@@ -208,24 +288,29 @@ public class MafiaController {
             case MAFIA:
                 if(picker.isHaveRight()){
                     object.setDead(true);
-                    content.append(object.getId()).append("님을 저격하였습니다.");
+                    content.append(object.getMemberId()).append("님을 저격하였습니다.");
+                    gameMessage.setRoomId(message.getRoomId());
+                    gameMessage.setType(GameMessage.MessageType.SERVER);
+                    gameMessage.setContent(content.toString());
                     messagingTemplate.convertAndSend("/topic/mafia/"+picker.getMemberId(), gameMessage);
+                    picker.setHaveRight(false);
+                    playerRepository.save(picker);
                 }
+                break;
             case POLICE:
                 if(picker.isHaveRight()){
-                    content.append(object.getId()).append("님의 정체는 ").append(object.getRole()).append("입니다.");
+                    content.append(object.getMemberId()).append("님의 정체는 ").append(object.getRole()).append("입니다.");
                     messagingTemplate.convertAndSend("/topic/mafia/"+picker.getMemberId(), gameMessage);
                 }
+                break;
             case DOCTOR:
                 if(picker.isHaveRight()){
-                    if(object.isDead()){
-                    content.append(object.getId()).append("님을 살렸습니다.");
-                    messagingTemplate.convertAndSend("/topic/mafia/"+picker.getMemberId(), gameMessage);
+                    if(object.isDead()) {
+                        content.append(object.getMemberId()).append("님을 살렸습니다.");
+                        messagingTemplate.convertAndSend("/topic/mafia/" + picker.getMemberId(), gameMessage);
+                    }
                 }
-                    picker.setHaveRight(false);
-        }
-            gameMessage.setContent("낮이 되었습니다.");
-            messagingTemplate.convertAndSend("/topic/mafia/"+message.getRoomId(), gameMessage);
+                break;
         }
     }
 
