@@ -166,4 +166,7 @@ public class MajorityService {
                 .build()).collect(Collectors.toList());
     }
 
+    public void chat(ChatResponseDto message) {
+        sendingOperations.convertAndSend(PATH + message.getRoomId(), message);
+    }
 }

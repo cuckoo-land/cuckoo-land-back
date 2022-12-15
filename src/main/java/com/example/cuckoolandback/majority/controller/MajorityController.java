@@ -30,6 +30,12 @@ public class MajorityController {
         majorityService.round(requestDto);
     }
 
+    //채팅
+    @MessageMapping("/majority/chat")
+    public void chat(ChatResponseDto message) {
+        majorityService.chat(message);
+    }
+
     @ApiOperation(value = "다수결 게임 목록 불러오기")
     @GetMapping("/api/majority")
     public ResponseEntity<List<MajorityResponseDto>> getAllMajority() {
