@@ -16,7 +16,7 @@ import javax.persistence.*;
 @PropertySource("{application-h2.properties}")
 public class Participant {
     @Id
-    String id;
+    String id; // memberId
 
     @Column(nullable = false)
     Long roomId;

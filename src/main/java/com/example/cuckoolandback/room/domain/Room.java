@@ -48,8 +48,4 @@ public class Room {
     @Column(nullable = true)
     String password;
 
-    @Column
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Player> playerList;
-
 }

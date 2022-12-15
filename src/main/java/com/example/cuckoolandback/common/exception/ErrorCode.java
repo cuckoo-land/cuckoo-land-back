@@ -23,7 +23,11 @@ public enum ErrorCode {
 
     //FRIEND
     FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "친구 정보를 찾을 수 없습니다."),
-    ALREADY_REQUESTD(HttpStatus.BAD_REQUEST, "400", "이미 친구 요청하였습니다.")
+    ALREADY_REQUESTD(HttpStatus.BAD_REQUEST, "400", "이미 친구 요청하였습니다."),
+
+    //Mafia
+    PLAYERS_LACK(HttpStatus.BAD_REQUEST,"400","참여 인원이 부족합니다."),
+    NOT_MAFIA(HttpStatus.BAD_REQUEST,"400","마피아가 아닙니다.")
     ;
 
     private final HttpStatus httpStatus;
