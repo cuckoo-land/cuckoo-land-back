@@ -296,6 +296,10 @@ public class MajorityService {
             Participant host = participantRepository.findFirstByRoomId(roomId);
             host.setHostTF(true);
             participantRepository.save(host);
+
+            Room room = findRoom(roomId, SendType.EXIT);
+            room.setHostId(host.getId());
+            roomRepository.save(room);
         }
 
     }
