@@ -37,6 +37,7 @@ public class MajorityService {
     private final RoomRepository roomRepository;
     private final RoomService roomService;
     private final VsRepository vsRepository;
+    private final ParticipantRepository participantRepository;
     public Optional<Majority> getRandom() {
         return majorityRepository.findMajorityByRandom();
     }
@@ -110,4 +111,50 @@ public class MajorityService {
         }
 
     }
+
+    @Transactional
+    public void round(RoundRequestDto requestDto) {
+
+        int round = requestDto.getRoundNum();
+        Optional<Vs> vsOptional = vsRepository.findByRoundNumAndRoomId(round, requestDto.getRoomId());
+
+        if (vsOptional.isPresent()) {
+            Vs vs = vsOptional.get();
+            Picture item1 = pictureRepository.findById(vs.getItemId1()).get();
+            Picture item2 = pictureRepository.findById(vs.getItemId2()).get();
+
+            RoundResponseDto responseDto = RoundResponseDto
+                    .builder()
+                    .item1(item1)
+                    .item2(item2)
+                    .roundNum(round)
+                    .roundTotal(requestDto.getTotalRound())
+                    .build();
+
+            sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), responseDto);
+
+            if (round < requestDto.getTotalRound() && round % 2 == 0) {
+                addVs(round, requestDto.getRoomId());
+            }
+        }
+
+
+    }
+
+    public void addVs(int round, Long roomId) {
+        Optional<Vs> vsOptional = vsRepository.findByRoundNumAndRoomId(round + 1, roomId);
+        Optional<Vs> vsOptional2 = vsRepository.findByRoundNumAndRoomId(round + 2, roomId);
+
+        Vs vs1 = vsOptional.get();
+        Vs vs2 = vsOptional2.get();
+
+        Vs vs = new Vs();
+        vs.setItemId1(vs1.getWinner());
+        vs.setItemId2(vs2.getWinner());
+        vs.setRoundNum(round / 2 + 1);
+        vs.setRoomId(roomId);
+
+        vsRepository.save(vs);
+    }
+
 }

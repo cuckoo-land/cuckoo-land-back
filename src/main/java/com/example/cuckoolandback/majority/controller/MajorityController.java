@@ -24,5 +24,10 @@ public class MajorityController {
         majorityService.start(requestDto);
     }
 
+    //방 정보와 몇번째 투표인지에 대한 정보로 이번 투표 사진정보 보내기
+    @MessageMapping("/majority/round")
+    public void round(RoundRequestDto requestDto) {
+        majorityService.round(requestDto);
+    }
 
 }
