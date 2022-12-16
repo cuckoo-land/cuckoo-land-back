@@ -90,7 +90,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             .allowedMethods("*")
             .allowedHeaders("*")
             .allowedOrigins("http://localhost:3000","https://cuckoo-land.vercel.app/")
-            .exposedHeaders("Authorization")
+            .exposedHeaders("Authorization", "Refresh-Token")
             .allowCredentials(true);
     }
 
