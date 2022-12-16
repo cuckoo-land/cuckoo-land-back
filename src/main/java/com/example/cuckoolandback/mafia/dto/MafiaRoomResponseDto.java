@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.mafia;
+package com.example.cuckoolandback.mafia.dto;
 
 import lombok.Getter;
 import lombok.Setter;

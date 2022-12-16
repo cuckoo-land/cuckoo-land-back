@@ -1,5 +1,6 @@
-package com.example.cuckoolandback.mafia;
+package com.example.cuckoolandback.mafia.dto;
 
+import com.example.cuckoolandback.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,6 @@ public class GameMessage {
     private MessageType type;
 
     public enum MessageType {
-        ENTER, START, LEAVE, DAY, MISSION, FAILMISSION, VOTE, CHAT, NIGHT, PICK, END, SERVER
+        ENTER, START, LEAVE, DAY, MISSION, FAILMISSION, VOTE, CHAT, NIGHT, PICK, ENDCHECK, SERVER
     }
 }

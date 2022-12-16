@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.mafia;
+package com.example.cuckoolandback.mafia.domain;
 
 import com.example.cuckoolandback.room.domain.Participant;
 import lombok.Getter;

@@ -21,7 +21,6 @@ public enum Message {
     //CHAT
     SERVER_NOTICE("서버 알림")
     ;
-
     final private String msg;
     public String getMsg() {
         return msg;

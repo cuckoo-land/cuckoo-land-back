@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.mafia;
+package com.example.cuckoolandback.mafia.dto;
 
 import com.example.cuckoolandback.user.domain.RoleType;
 import lombok.Getter;
