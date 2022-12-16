@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
         registry.addMapping("/**")
             .allowedMethods("*")
             .allowedHeaders("*")
-            .allowedOrigins("http://localhost:3000")
+            .allowedOrigins("http://localhost:3000","https://cuckoo-land.vercel.app/")
             .exposedHeaders("*")
             .allowCredentials(true);
     }
