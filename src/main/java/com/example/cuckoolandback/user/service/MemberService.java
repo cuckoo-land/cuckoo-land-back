@@ -59,7 +59,7 @@ public class MemberService {
                 .mafiaWinScore(0)
                 .mafiaTier(0)
                 .majorTotal(0)
-                .mafiaWinNum("00")
+                .majorWinNum("00")
                 .majorWinScore(0)
                 .majorWinNum("00")
                 .majorTier(0)

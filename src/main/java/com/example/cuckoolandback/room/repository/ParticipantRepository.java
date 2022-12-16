@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
 public interface ParticipantRepository extends JpaRepository<Participant,String> {
 
     List<Participant> findByRoomId(Long roomid);
@@ -16,4 +15,5 @@ public interface ParticipantRepository extends JpaRepository<Participant,String>
             nativeQuery = true)
     int numOfParticipants(@Param("roomId")Long roomId);
 
+    Participant findFirstByRoomId(Long roomId);
 }

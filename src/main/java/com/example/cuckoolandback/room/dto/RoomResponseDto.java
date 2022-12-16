@@ -19,7 +19,7 @@ public class RoomResponseDto {
     Long id;
     @ApiModelProperty(value="제목", example = "같이 게임 해요", required = true)
     String title;
-    @ApiModelProperty(value="참여코드", example = "2f48f241-9d64-4d16-bf56-70b9d4e0e79a", required = true)
+    @ApiModelProperty(value="참여코드", example = "2f48f241", required = true)
     String code;
     @ApiModelProperty(value="방장", example = "bird1", required = true)
     String hostId;

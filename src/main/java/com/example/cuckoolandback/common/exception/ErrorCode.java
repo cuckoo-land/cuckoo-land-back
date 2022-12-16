@@ -20,7 +20,8 @@ public enum ErrorCode {
     //room
     CHECK_FAILED(HttpStatus.UNAUTHORIZED,"401","비밀번호가 일치하지 않습니다."),
     ROOMS_NOT_FOUND(HttpStatus.NOT_FOUND,"404","해당하는 방이 존재하지 않습니다."),
-
+    DUPLICATE_CODE(HttpStatus.BAD_REQUEST,"400","중복된 코드입니다."),
+    CREATE_FAILED(HttpStatus.BAD_REQUEST,"400","방을 생성할 수 없습니다."),
     //FRIEND
     FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "친구 정보를 찾을 수 없습니다."),
     ALREADY_REQUESTD(HttpStatus.BAD_REQUEST, "400", "이미 친구 요청하였습니다."),
