@@ -92,6 +92,7 @@ public class RoomService {
             participantRepository.save(Participant.builder()
                     .id(roomRequestDto.getHostId())
                     .roomId(room.getId())
+                    .hostTF(true)
                     .build());
         }catch (Exception e){
             throw new CustomException(ErrorCode.CREATE_FAILED);

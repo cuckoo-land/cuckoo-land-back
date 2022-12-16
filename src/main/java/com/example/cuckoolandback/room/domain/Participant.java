@@ -16,4 +16,7 @@ public class Participant {
 
     @Column(nullable = false)
     Long roomId;
+
+    @Column(nullable = false)
+    boolean hostTF;
 }
