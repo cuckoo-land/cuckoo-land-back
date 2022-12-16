@@ -57,11 +57,11 @@ public class MemberService {
                 .roleType(RoleType.USER)
                 .mafiaWinNum("0000")
                 .mafiaWinScore(0)
-                .mafiaTier(0)
+                .mafiaTier(1)
                 .majorTotal(0)
                 .majorWinNum("00")
                 .majorWinScore(0)
-                .majorTier(0)
+                .majorTier(1)
                 .majorTotal(0)
                 .build();
 
