@@ -317,7 +317,7 @@ public class MafiaController {
         // 방 정보 초기화
         // 승률과 승점 계산하여 member정보 DB반영
         List<Player> mafias = playerRepository.findByRoleAndRoomId(Role.MAFIA,message.getRoomId());
-        int notMafias = playerRepository.findByRoomId(message.getRoomId()).size()-mafias.size();
+        List<Player> notMafias = playerRepository.findByRoleNotMafiaAndRoomId(message.getRoomId());
 
         if(mafias.size()==0){
             GameMessage gameMessage = new GameMessage();
@@ -326,13 +326,14 @@ public class MafiaController {
             gameMessage.setContent("시민 승리");
             gameMessage.setType(GameMessage.MessageType.SERVER);
             messagingTemplate.convertAndSend("/topic/mafia/" + message.getRoomId(), gameMessage);
-            for(Player player:mafias){ // 이거 마피아 아닌 플레이어 리스트로 바꾸기
+            for(Player player:notMafias){
                 Member member = memberRepository.findByMemberId(player.getMemberId()).orElseThrow(
                         ()->new CustomException(ErrorCode.USER_NOT_FOUND)
                 );
                 member.setMafiaWinNum(member.getMajorWinNum()+1);
+                playerRepository.deletePlayerByRoomId(message.getRoomId());
             }
-        }else if(mafias.size()>=notMafias){
+        }else if(mafias.size()>=notMafias.size()){
             GameMessage gameMessage = new GameMessage();
             gameMessage.setRoomId(message.getRoomId());
             gameMessage.setSender(Message.SERVER_NOTICE.getMsg());
@@ -344,8 +345,8 @@ public class MafiaController {
                         ()->new CustomException(ErrorCode.USER_NOT_FOUND)
                 );
                 member.setMafiaWinNum(member.getMajorWinNum()+1);
+                playerRepository.deletePlayerByRoomId(message.getRoomId());
             }
         }
-
     }
 }
