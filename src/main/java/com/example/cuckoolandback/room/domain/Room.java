@@ -13,7 +13,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @DynamicInsert
 @Entity
-@Table(name = "room")
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

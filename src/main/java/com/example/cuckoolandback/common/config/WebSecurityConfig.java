@@ -59,8 +59,6 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             .cors()
             .and()
             .csrf().disable()
-            .headers().frameOptions().sameOrigin()
-            .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
             .and()
             .exceptionHandling()
@@ -72,7 +70,6 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             .antMatchers("/api/user/**").hasAnyAuthority(RoleType.USER.getCode())
             .antMatchers("/api/auth/**").authenticated()
             .antMatchers(PERMIT_URL_ARRAY).permitAll()
-            .antMatchers("/ws/**").permitAll()
             .anyRequest().permitAll();
         return http.build();
     }
