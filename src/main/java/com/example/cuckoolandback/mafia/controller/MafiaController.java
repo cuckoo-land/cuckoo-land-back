@@ -83,7 +83,7 @@ public class MafiaController {
                         .roomId(roomID)
                         .build());
 
-        List<Participant> participants = participantRepository.findByRoomId(roomID);
+        List<Participant> participants = participantRepository.findByRoomIdOrderByCreatedDate(roomID);
 
         StringBuilder content= new StringBuilder();
         for(Participant participant:participants){
@@ -104,7 +104,7 @@ public class MafiaController {
         roomRepository.findById(roomID).orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
         participantRepository.deleteById(message.getSender());
 
-        List<Participant> participants = participantRepository.findByRoomId(roomID);
+        List<Participant> participants = participantRepository.findByRoomIdOrderByCreatedDate(roomID);
 
         StringBuilder content= new StringBuilder();
         for(Participant participant:participants){
@@ -123,7 +123,7 @@ public class MafiaController {
     public void gameStart(GameMessage message) {
         // ROOM 접속한 사람들 정보 취합하여 리턴(플레이어 정보 - 각각에게 역할 전달, 마피아에게 미션전달)
         Long roomID = message.getRoomId();
-        List<Participant> participants = participantRepository.findByRoomId(roomID);
+        List<Participant> participants = participantRepository.findByRoomIdOrderByCreatedDate(roomID);
         int cnt = participants.size();
         if(cnt <5){
             throw new CustomException(ErrorCode.PLAYERS_LACK);
@@ -147,8 +147,8 @@ public class MafiaController {
         for(int i=0;i<participants.size();i++){
             Player player = new Player(participants.get(i));
             player.setRole(roles.get(i));
-            if(player.getRole().equals(Role.MAFIA)){
-                player.setHaveRight(false);
+            if ((player.getRole().equals(Role.DOCTOR)) || (player.getRole().equals(Role.POLICE))) {
+                player.setHaveRight(true);
             }
             playerRepository.save(player);
             playerList.add(player);
@@ -156,7 +156,7 @@ public class MafiaController {
         List<String> keywords =
                 Arrays.asList("오잉","지금","방가","박수","코","느낌","범인","뭐지","뷁","눈치","사랑","강퇴","매너");
         Collections.shuffle(keywords);
-
+        int order = 0;
         for(Player player:playerList){
             GameMessage gameMessage = new GameMessage();
             gameMessage.setRoomId(roomID);
@@ -165,7 +165,7 @@ public class MafiaController {
 
             StringBuilder content= new StringBuilder();
             if(player.getRole().equals(Role.MAFIA)){
-                content.append("미션 키워드").append(", ").append(keywords.get(0));
+                content.append("미션 키워드").append(", ").append(keywords.get(order++));
             }
             gameMessage.setContent(player.getMemberId()+":"+ player.getRole()+":"+content);
             messagingTemplate.convertAndSend("/topic/mafia/" +message.getRoomId(), gameMessage);

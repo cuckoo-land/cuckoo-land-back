@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 
 @Configuration
-@PropertySource({"classpath:application-db_url.properties"})
+@PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories(
         basePackages = "com.example.cuckoolandback.mafia.repository",
         entityManagerFactoryRef = "gameEntityManager",
