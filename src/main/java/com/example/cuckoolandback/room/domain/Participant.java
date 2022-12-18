@@ -1,9 +1,7 @@
 package com.example.cuckoolandback.room.domain;
 
-import com.example.cuckoolandback.user.domain.Member;
+import com.example.cuckoolandback.common.domain.BaseTime;
 import lombok.*;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 
 import javax.persistence.*;
 
@@ -13,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Participant {
+public class Participant extends BaseTime {
     @Id
     String id; // memberId
 

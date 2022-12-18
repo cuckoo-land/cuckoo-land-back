@@ -38,7 +38,7 @@ dependencies {
     // web socket
     implementation 'org.springframework.boot:spring-boot-starter-websocket:2.7.5'
     // h2
-    runtimeOnly 'com.h2database:h2'
+    implementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
