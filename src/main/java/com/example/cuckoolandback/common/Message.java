@@ -17,9 +17,10 @@ public enum Message {
     PASSWORD_CORRECT("password check success"),
     //FRIEND
     REQUEST_SUCCESS("친구요청 완료"),
-    ACCEPT_SUCCESS("친구수락 완료")
+    ACCEPT_SUCCESS("친구수락 완료"),
+    //CHAT
+    SERVER_NOTICE("서버 알림")
     ;
-
     final private String msg;
     public String getMsg() {
         return msg;

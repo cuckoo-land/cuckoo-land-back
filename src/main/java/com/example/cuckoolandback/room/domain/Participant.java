@@ -1,6 +1,9 @@
 package com.example.cuckoolandback.room.domain;
 
+import com.example.cuckoolandback.user.domain.Member;
 import lombok.*;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 
 import javax.persistence.*;
 
@@ -12,7 +15,7 @@ import javax.persistence.*;
 @Entity
 public class Participant {
     @Id
-    String id;
+    String id; // memberId
 
     @Column(nullable = false)
     Long roomId;
