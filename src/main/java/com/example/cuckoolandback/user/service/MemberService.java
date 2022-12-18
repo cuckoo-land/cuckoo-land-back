@@ -8,7 +8,7 @@ import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.dto.*;
 import com.example.cuckoolandback.user.jwt.JwtProvider;
-import com.example.cuckoolandback.user.jwt.RefreshToken;
+import com.example.cuckoolandback.user.domain.RefreshToken;
 import com.example.cuckoolandback.user.jwt.TokenDto;
 import com.example.cuckoolandback.user.repository.MemberRepository;
 import com.example.cuckoolandback.user.repository.RefreshTokenRepository;

@@ -12,6 +12,6 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     Optional<Player> findByMemberId(String memberId);
     List<Player> findByRoleAndRoomId(Role role, Long roomId);
     List<Player> findByRoomId(Long roomId);
-    List<Player> findByRoleNotMafiaAndRoomId(Long roomId);
+    List<Player> findByRoleNotContainingAndRoomId(Role role,Long roomId);
     void deletePlayerByRoomId(Long roomId);
 }

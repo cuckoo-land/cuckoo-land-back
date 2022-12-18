@@ -41,8 +41,8 @@ public class MafiaController {
         if (GameMessage.MessageType.ENTER.equals(message.getType())) {
             gameEnter(message);
         }
-        if (GameMessage.MessageType.LEAVE.equals(message.getType())) {
-            gameLeave(message);
+        if (GameMessage.MessageType.EXIT.equals(message.getType())) {
+            gameExit(message);
         }
         if (GameMessage.MessageType.START.equals(message.getType())) {
             gameStart(message);
@@ -98,7 +98,7 @@ public class MafiaController {
     }
 
     @Transactional
-    public void gameLeave(GameMessage message) {
+    public void gameExit(GameMessage message) {
         Long roomID = message.getRoomId();
         roomRepository.findById(roomID).orElseThrow(() -> new CustomException(ErrorCode.ROOMS_NOT_FOUND));
         participantRepository.deleteById(message.getSender());
@@ -317,7 +317,7 @@ public class MafiaController {
         // 방 정보 초기화
         // 승률과 승점 계산하여 member정보 DB반영
         List<Player> mafias = playerRepository.findByRoleAndRoomId(Role.MAFIA,message.getRoomId());
-        List<Player> notMafias = playerRepository.findByRoleNotMafiaAndRoomId(message.getRoomId());
+        List<Player> notMafias = playerRepository.findByRoleNotContainingAndRoomId(Role.MAFIA,message.getRoomId());
 
         if(mafias.size()==0){
             GameMessage gameMessage = new GameMessage();

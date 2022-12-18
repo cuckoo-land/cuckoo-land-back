@@ -17,6 +17,6 @@ public class GameMessage {
     private MessageType type;
 
     public enum MessageType {
-        ENTER, START, LEAVE, DAY, MISSION, FAILMISSION, VOTE, CHAT, NIGHT, PICK, ENDCHECK, SERVER
+        ENTER, START, EXIT, DAY, MISSION, FAILMISSION, VOTE, CHAT, NIGHT, PICK, ENDCHECK, SERVER
     }
 }
