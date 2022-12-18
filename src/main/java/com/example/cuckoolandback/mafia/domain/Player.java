@@ -14,6 +14,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
     @Column
     private String memberId;
 
