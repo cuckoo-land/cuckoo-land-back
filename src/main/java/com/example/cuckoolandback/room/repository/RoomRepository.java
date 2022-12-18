@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room,Long> {
 
     Optional<Room> findRoomByCode(String code);
+    Optional<Room> findById(Long id);
 
     @Query(value = "SELECT * FROM room\n" +
             "WHERE MATCH (host_id, title) AGAINST (:keyword IN BOOLEAN MODE)",

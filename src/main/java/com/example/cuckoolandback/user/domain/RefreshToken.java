@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.user.jwt;
+package com.example.cuckoolandback.user.domain;
 
 import com.example.cuckoolandback.common.domain.BaseTime;
 import com.example.cuckoolandback.user.domain.Member;
