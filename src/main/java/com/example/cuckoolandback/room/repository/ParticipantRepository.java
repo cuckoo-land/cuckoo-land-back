@@ -11,7 +11,7 @@ public interface ParticipantRepository extends JpaRepository<Participant,String>
 
     List<Participant> findByRoomId(Long roomid);
     @Query(value = "SELECT COUNT(*) FROM participant\n" +
-            "WHERE room_id = :roomId",
+            "WHERE roomId = :roomId",
             nativeQuery = true)
     int numOfParticipants(@Param("roomId")Long roomId);
 

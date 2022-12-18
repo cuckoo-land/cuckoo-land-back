@@ -13,7 +13,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@PropertySource("{application-h2.properties}")
 public class Participant {
     @Id
     String id; // memberId
