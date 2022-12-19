@@ -10,7 +10,7 @@ import java.util.List;
 public interface ParticipantRepository extends JpaRepository<Participant,String> {
 
     List<Participant> findByRoomIdOrderByCreatedDate(Long roomid);
-    @Query(value = "SELECT COUNT(*) FROM participant\n" +
+    @Query(value = "SELECT COUNT(*) FROM Participant\n" +
             "WHERE roomId = :roomId",
             nativeQuery = true)
     int numOfParticipants(@Param("roomId")Long roomId);
