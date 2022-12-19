@@ -8,6 +8,7 @@ import com.example.cuckoolandback.majority.domain.Vs;
 import com.example.cuckoolandback.majority.dto.*;
 import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
+import com.example.cuckoolandback.majority.repository.VoteRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
 import com.example.cuckoolandback.room.domain.GameType;
 import com.example.cuckoolandback.room.domain.Participant;
@@ -39,6 +40,7 @@ public class MajorityService {
     private final RoomRepository roomRepository;
     private final RoomService roomService;
     private final VsRepository vsRepository;
+    private final VoteRepository voteRepository;
     private final ParticipantRepository participantRepository;
     private final MemberRepository memberRepository;
 
