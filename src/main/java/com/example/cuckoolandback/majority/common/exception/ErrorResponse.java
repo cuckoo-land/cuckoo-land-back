@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common.exception;
+package com.example.cuckoolandback.majority.common.exception;
 
 import lombok.Builder;
 import lombok.Getter;

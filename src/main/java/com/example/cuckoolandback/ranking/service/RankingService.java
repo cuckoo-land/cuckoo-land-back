@@ -1,15 +1,13 @@
 package com.example.cuckoolandback.ranking.service;
 
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
 import com.example.cuckoolandback.user.domain.Member;
-import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 

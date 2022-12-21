@@ -1,7 +1,7 @@
 package com.example.cuckoolandback.user.jwt;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.util.HeaderUtil;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.util.HeaderUtil;
 import com.example.cuckoolandback.user.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

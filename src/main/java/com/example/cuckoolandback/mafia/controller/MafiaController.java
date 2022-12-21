@@ -1,8 +1,8 @@
 package com.example.cuckoolandback.mafia.controller;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.mafia.dto.GameMessage;
 import com.example.cuckoolandback.mafia.domain.Player;
 import com.example.cuckoolandback.mafia.repository.PlayerRepository;

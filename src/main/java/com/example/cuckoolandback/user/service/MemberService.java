@@ -1,8 +1,8 @@
 package com.example.cuckoolandback.user.service;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.user.domain.Member;
 import com.example.cuckoolandback.user.domain.RefreshToken;
 import com.example.cuckoolandback.user.domain.RoleType;
@@ -59,11 +59,11 @@ public class MemberService {
                 .nickname(registerDto.getNickname())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
-                .mafiaWinNum("0000")
+                .mafiaWinNum("0 0 0 0")
                 .mafiaWinScore(0)
                 .mafiaTier(1)
                 .majorTotal(0)
-                .majorWinNum("00")
+                .majorWinNum("0 0")
                 .majorWinScore(0)
                 .majorTier(1)
                 .majorTotal(0)

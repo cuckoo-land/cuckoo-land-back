@@ -1,8 +1,8 @@
 package com.example.cuckoolandback.room.service;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;

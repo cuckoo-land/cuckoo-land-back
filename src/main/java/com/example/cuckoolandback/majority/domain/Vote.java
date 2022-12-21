@@ -22,10 +22,10 @@ public class Vote {
     Long userId;
 
     @Column(nullable = false)
-    Long voteId1; //투표한 item아이디
+    Long pickId; //투표한 item아이디
 
     @Column(nullable = false)
-    Long voteId2;
+    Long notPickId; //상대 item아이디
 
     @Column(nullable = false)
     boolean isAns;

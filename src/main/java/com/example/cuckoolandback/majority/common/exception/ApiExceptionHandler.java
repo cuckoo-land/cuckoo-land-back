@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common.exception;
+package com.example.cuckoolandback.majority.common.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

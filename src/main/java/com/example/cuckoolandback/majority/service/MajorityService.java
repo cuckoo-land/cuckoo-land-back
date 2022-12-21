@@ -1,16 +1,16 @@
 package com.example.cuckoolandback.majority.service;
 
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.majority.domain.Majority;
 import com.example.cuckoolandback.majority.domain.Picture;
+import com.example.cuckoolandback.majority.domain.Vote;
 import com.example.cuckoolandback.majority.domain.Vs;
 import com.example.cuckoolandback.majority.dto.*;
 import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VoteRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
-import com.example.cuckoolandback.room.domain.GameType;
 import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;
@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MajorityService {
+
     private final SimpMessageSendingOperations sendingOperations;
     private final MajorityRepository majorityRepository;
     private final PictureRepository pictureRepository;
@@ -55,8 +56,8 @@ public class MajorityService {
 
         if (roomOptional.isEmpty()) {
             MajorityMessage message = MajorityMessage.builder()
-                    .type(type)
-                    .message("NOT FOUND ROOM").build();
+                .type(type)
+                .message("NOT FOUND ROOM").build();
             sendingOperations.convertAndSend(PATH + roomId, message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
@@ -69,7 +70,7 @@ public class MajorityService {
         Optional<Majority> majority;
         List<Picture> pictures;
         int roundTotal = 0;
-        Room room = findRoom(requestDto.getRoomId(),SendType.START);
+        Room room = findRoom(requestDto.getRoomId(), SendType.START);
         switch (requestDto.getRound()) {
             case THIRTYTWO:
                 roundTotal = 32;
@@ -97,17 +98,19 @@ public class MajorityService {
 
                 vsList.add(vs);
 
-                if (pictures.size() / 2 <= i + 1) break;
+                if (pictures.size() / 2 <= i + 1) {
+                    break;
+                }
             }
             room.setState(RoomStatus.PLAYING);
             roomRepository.save(room);
 
             GameResponseDto responseDto = GameResponseDto.builder()
-                    .title(majority.get().getTitle())
-                    .numOfPeople(roomService.getNumOfPeople(requestDto.getRoomId()))
-                    .maximum(room.getMaximum())
-                    .totalRound(roundTotal)
-                    .build();
+                .title(majority.get().getTitle())
+                .numOfPeople(roomService.getNumOfPeople(requestDto.getRoomId()))
+                .maximum(room.getMaximum())
+                .totalRound(roundTotal)
+                .build();
 
             vsRepository.saveAll(vsList);
 
@@ -115,18 +118,89 @@ public class MajorityService {
 
         } else {
             MajorityMessage message = MajorityMessage.builder()
-                    .type(SendType.START)
-                    .message("NOT FOUND DATA").build();
+                .type(SendType.START)
+                .message("NOT FOUND DATA").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
         }
 
     }
 
+
+    @Transactional
+    public void vote(List<VoteRequestDto> requestDtos) {
+        //해당 라운드에서 서로 붙는 picture (첫 번째 기준, 공통)
+        Long pic1 = requestDtos.get(0).getPickId();
+        Long pic2 = requestDtos.get(0).getNotPickId();
+        Long roomId = requestDtos.get(0).getRoomId();
+        int roundNum = requestDtos.get(0).getRoundNum();
+
+        Long winPic = null;
+
+        //다수결쪽인 pic 판단
+        int sum1 = 0;
+        int sum2 = 0;
+        for (VoteRequestDto requestDto : requestDtos) {
+            if (requestDto.getPickId() == pic1) {
+                sum1 += 1;
+            } else if (requestDto.getPickId() == pic2) {
+                sum2 += 1;
+            } else {
+                //아이디가 올바르지 않음
+            }
+        }
+        if (sum1 > sum2) {
+            winPic = pic1;
+        } else if (sum2 > sum1) {
+            winPic = pic2;
+        } else if (sum1 == sum2) {
+            //무승부, 아래로 가지 말고 다시 투표,,
+            MajorityMessage message = MajorityMessage.builder()
+                .type(SendType.REROUND)
+                .message("재투표 필요").build();
+            sendingOperations.convertAndSend(PATH + roomId, message);
+        }
+
+        //vs레포 저장
+        Vs vs = Vs.builder()
+            .roundNum(roundNum)
+            .itemId1(pic1)
+            .itemId2(pic2)
+            .winner(winPic)
+            .build();
+        vsRepository.save(vs);
+
+        //vote레포 저장
+        List<Vote> voteList = new ArrayList<>();
+
+        for (VoteRequestDto requestDto : requestDtos) {
+            Vote vote = Vote.builder()
+                .roomId(requestDto.getRoomId())
+                .pickId(requestDto.getPickId())
+                .notPickId(requestDto.getNotPickId())
+                .isAns(requestDto.getPickId() == winPic)
+                .build();
+
+            voteRepository.save(vote);
+        }
+
+        //결과 전송
+        VoteResponseDto voteResponseDto=VoteResponseDto.builder()
+            .pic1(pictureRepository.findPictureById(pic1).getName())
+            .pic2(pictureRepository.findPictureById(pic2).getName())
+            .pic1num(sum1)
+            .pic2num(sum2)
+            .build();
+        sendingOperations.convertAndSend(PATH + roomId, voteResponseDto);
+
+    }
+
+
     @Transactional
     public void round(RoundRequestDto requestDto) {
 
         int round = requestDto.getRoundNum();
-        Optional<Vs> vsOptional = vsRepository.findByRoundNumAndRoomId(round, requestDto.getRoomId());
+        Optional<Vs> vsOptional = vsRepository.findByRoundNumAndRoomId(round,
+            requestDto.getRoomId());
 
         if (vsOptional.isPresent()) {
             Vs vs = vsOptional.get();
@@ -134,12 +208,12 @@ public class MajorityService {
             Picture item2 = pictureRepository.findById(vs.getItemId2()).get();
 
             RoundResponseDto responseDto = RoundResponseDto
-                    .builder()
-                    .item1(item1)
-                    .item2(item2)
-                    .roundNum(round)
-                    .roundTotal(requestDto.getTotalRound())
-                    .build();
+                .builder()
+                .item1(item1)
+                .item2(item2)
+                .roundNum(round)
+                .roundTotal(requestDto.getTotalRound())
+                .build();
 
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), responseDto);
 
@@ -171,9 +245,9 @@ public class MajorityService {
     public List<MajorityResponseDto> getAllMajority() {
         List<Majority> majorityList = majorityRepository.findAll();
         return majorityList.stream().map(majority -> MajorityResponseDto.builder()
-                .id(majority.getId())
-                .title(majority.getTitle())
-                .build()).collect(Collectors.toList());
+            .id(majority.getId())
+            .title(majority.getTitle())
+            .build()).collect(Collectors.toList());
     }
 
     @Transactional
@@ -181,31 +255,31 @@ public class MajorityService {
         Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
         if (memberOptional.isEmpty()) {
             MajorityMessage message = MajorityMessage.builder()
-                    .type(SendType.ENTER)
-                    .message("NOT FOUND Member").build();
+                .type(SendType.ENTER)
+                .message("NOT FOUND Member").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
 
         ChatResponseDto message = ChatResponseDto
-                .builder()
-                .sender(requestDto.getNickname())
-                .message(requestDto.getNickname() + "님이 입장하였습니다.")
-                .roomId(requestDto.getRoomId())
-                .build();
+            .builder()
+            .sender(requestDto.getNickname())
+            .message(requestDto.getNickname() + "님이 입장하였습니다.")
+            .roomId(requestDto.getRoomId())
+            .build();
 
         Member member = memberOptional.get();
 
         addParticipant(requestDto.getNickname(), requestDto.getRoomId());
 
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), EnterResponseDto
-                .builder()
-                .member(MemberResponseDto.builder()
-                        .memberId(member.getMemberId())
-                        .nickname(member.getNickname())
-                        .roleType(member.getRoleType())
-                        .build())
-                .build());
+            .builder()
+            .member(MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .roleType(member.getRoleType())
+                .build())
+            .build());
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
     }
 
@@ -217,9 +291,9 @@ public class MajorityService {
         Optional<Member> memberOptional = memberRepository.findByNickname(requestDto.getNickname());
         if (memberOptional.isEmpty()) {
             MajorityMessage message = MajorityMessage
-                    .builder()
-                    .type(SendType.EXIT)
-                    .message("NOT FOUND Member").build();
+                .builder()
+                .type(SendType.EXIT)
+                .message("NOT FOUND Member").build();
             sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
             throw new CustomException(ErrorCode.ROOMS_NOT_FOUND);
         }
@@ -229,63 +303,63 @@ public class MajorityService {
         removeParticipant(requestDto.getNickname(), requestDto.getRoomId());
 
         ChatResponseDto message = ChatResponseDto
-                .builder()
-                .sender(requestDto.getNickname())
-                .message(requestDto.getNickname() + "님이 퇴장하였습니다.")
-                .roomId(requestDto.getRoomId())
-                .build();
+            .builder()
+            .sender(requestDto.getNickname())
+            .message(requestDto.getNickname() + "님이 퇴장하였습니다.")
+            .roomId(requestDto.getRoomId())
+            .build();
 
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), ExitResponseDto
-                .builder()
-                .member(MemberResponseDto.builder()
-                        .memberId(member.getMemberId())
-                        .nickname(member.getNickname())
-                        .roleType(member.getRoleType())
-                        .build())
-                .build());
+            .builder()
+            .member(MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .roleType(member.getRoleType())
+                .build())
+            .build());
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), message);
 
     }
 
     @Transactional
-    public void addParticipant(String id, Long roomId){
-        Room room = findRoom(roomId,SendType.ENTER);
+    public void addParticipant(String id, Long roomId) {
+        Room room = findRoom(roomId, SendType.ENTER);
         int numOfParticipant = participantRepository.numOfParticipants(roomId);
-        if(room.getMaximum() <= numOfParticipant){
+        if (room.getMaximum() <= numOfParticipant) {
             MajorityMessage message = MajorityMessage
-                    .builder()
-                    .message("ALREADY FULL")
-                    .type(SendType.ENTER)
-                    .build();
+                .builder()
+                .message("ALREADY FULL")
+                .type(SendType.ENTER)
+                .build();
             sendingOperations.convertAndSend(PATH + roomId, message);
             throw new CustomException(ErrorCode.CHECK_FAILED);
-        }else if(room.getMaximum()-1 ==numOfParticipant){
+        } else if (room.getMaximum() - 1 == numOfParticipant) {
             room.setState(RoomStatus.FULL);
             roomRepository.save(room);
         }
 
         participantRepository.save(Participant.builder()
-                .roomId(roomId)
-                .id(id)
-                .hostTF(false)
-                .build());
+            .roomId(roomId)
+            .id(id)
+            .hostTF(false)
+            .build());
     }
 
-    public void removeParticipant(String id, Long roomId){
+    public void removeParticipant(String id, Long roomId) {
         int numOfParticipant = participantRepository.numOfParticipants(roomId);
-        if(numOfParticipant ==1){
+        if (numOfParticipant == 1) {
             roomRepository.deleteById(roomId);
             participantRepository.deleteById(id);
             return;
         }
 
         Optional<Participant> participantOptional = participantRepository.findById(id);
-        if(participantOptional.isEmpty()){
+        if (participantOptional.isEmpty()) {
             MajorityMessage message = MajorityMessage
-                    .builder()
-                    .message("NOT FOUND PARTICIPANT")
-                    .type(SendType.EXIT)
-                    .build();
+                .builder()
+                .message("NOT FOUND PARTICIPANT")
+                .type(SendType.EXIT)
+                .build();
             sendingOperations.convertAndSend(PATH + roomId, message);
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
@@ -294,7 +368,7 @@ public class MajorityService {
         boolean isHost = participant.isHostTF();
         participantRepository.delete(participant);
 
-        if(isHost){
+        if (isHost) {
             Participant host = participantRepository.findFirstByRoomId(roomId);
             host.setHostTF(true);
             participantRepository.save(host);

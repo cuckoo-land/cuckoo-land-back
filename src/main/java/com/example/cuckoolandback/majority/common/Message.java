@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common;
+package com.example.cuckoolandback.majority.common;
 
 public enum Message {
     //MEMBER

@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common.domain;
+package com.example.cuckoolandback.majority.common.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

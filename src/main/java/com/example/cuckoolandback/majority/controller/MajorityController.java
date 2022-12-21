@@ -36,6 +36,12 @@ public class MajorityController {
         majorityService.round(requestDto);
     }
 
+    //라운드가 끝날 때마다 투표 정보 보내기
+    @MessageMapping("/majority/vote")
+    public void round(List<VoteRequestDto> requestDtos) {
+        majorityService.vote(requestDtos);
+    }
+
     //방 나가기
     @MessageMapping("/majority/exit")
     public void start(EnterRequestDto requestDto) {
