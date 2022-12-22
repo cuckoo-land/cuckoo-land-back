@@ -19,7 +19,7 @@ public class Vote {
     Long roomId;
 
     @Column(nullable = false)
-    Long userId;
+    String memberId;
 
     @Column(nullable = false)
     Long pickId; //투표한 item아이디

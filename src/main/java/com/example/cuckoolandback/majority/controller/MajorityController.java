@@ -38,8 +38,9 @@ public class MajorityController {
 
     //라운드가 끝날 때마다 투표 정보 보내기
     @MessageMapping("/majority/vote")
-    public void round(List<VoteRequestDto> requestDtos) {
-        majorityService.vote(requestDtos);
+    public void round(VoteRequestDto requestDto) {
+        System.out.println(00000);
+        majorityService.vote(requestDto);
     }
 
     //방 나가기

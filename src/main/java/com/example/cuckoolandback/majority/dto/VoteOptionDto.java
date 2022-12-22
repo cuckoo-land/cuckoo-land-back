@@ -9,14 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VoteResponseDto {
-    final SendType type = SendType.VOTE;
-    long picId1;
-    long picId2;
-    long winPicId;
+public class VoteOptionDto {
 
-    int pic1num;
-    int pic2num;
-
-    int roundNum;
+    private String memberId;
+    private long pickId; //투표한 사진id
+    private long notPickId; //투표하지 않은 id
 }

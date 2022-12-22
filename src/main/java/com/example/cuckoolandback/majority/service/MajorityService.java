@@ -127,31 +127,35 @@ public class MajorityService {
 
 
     @Transactional
-    public void vote(List<VoteRequestDto> requestDtos) {
-        //해당 라운드에서 서로 붙는 picture (첫 번째 기준, 공통)
-        Long pic1 = requestDtos.get(0).getPickId();
-        Long pic2 = requestDtos.get(0).getNotPickId();
-        Long roomId = requestDtos.get(0).getRoomId();
-        int roundNum = requestDtos.get(0).getRoundNum();
+    public void vote(VoteRequestDto requestDto) {
+        //해당 라운드에서 서로 붙는 picture (공통)
+        long roomId = requestDto.getRoomId();
+        Room room = roomRepository.findById(roomId).orElseThrow(
+            () -> new CustomException(ErrorCode.ROOMS_NOT_FOUND)
+        );
+        int roundNum = requestDto.getRoundNum();
+        long picId1 = requestDto.getPicId1();
+        long picId2 = requestDto.getPicId2();
 
-        Long winPic = null;
+        long winPicId = 0;
 
         //다수결쪽인 pic 판단
         int sum1 = 0;
         int sum2 = 0;
-        for (VoteRequestDto requestDto : requestDtos) {
-            if (requestDto.getPickId() == pic1) {
+        List<VoteOptionDto> dtoVoteList = requestDto.getVoteList();
+        for (VoteOptionDto vote : dtoVoteList) {
+            if (vote.getPickId() == picId1) {
                 sum1 += 1;
-            } else if (requestDto.getPickId() == pic2) {
+            } else if (vote.getPickId() == picId2) {
                 sum2 += 1;
             } else {
                 //아이디가 올바르지 않음
             }
         }
         if (sum1 > sum2) {
-            winPic = pic1;
+            winPicId = picId1;
         } else if (sum2 > sum1) {
-            winPic = pic2;
+            winPicId = picId2;
         } else if (sum1 == sum2) {
             //무승부, 아래로 가지 말고 다시 투표,,
             MajorityMessage message = MajorityMessage.builder()
@@ -162,33 +166,36 @@ public class MajorityService {
 
         //vs레포 저장
         Vs vs = Vs.builder()
+            .roomId(roomId)
             .roundNum(roundNum)
-            .itemId1(pic1)
-            .itemId2(pic2)
-            .winner(winPic)
+            .itemId1(picId1)
+            .itemId2(picId2)
+            .winner(winPicId)
             .build();
         vsRepository.save(vs);
 
         //vote레포 저장
-        List<Vote> voteList = new ArrayList<>();
-
-        for (VoteRequestDto requestDto : requestDtos) {
+        List<Vote> voteList=new ArrayList<>();
+        for (VoteOptionDto voteDto : dtoVoteList) {
             Vote vote = Vote.builder()
-                .roomId(requestDto.getRoomId())
-                .pickId(requestDto.getPickId())
-                .notPickId(requestDto.getNotPickId())
-                .isAns(requestDto.getPickId() == winPic)
+                .roomId(roomId)
+                .memberId(voteDto.getMemberId())
+                .pickId(voteDto.getPickId())
+                .notPickId(voteDto.getNotPickId())
+                .isAns(voteDto.getPickId() == winPicId)
                 .build();
-
-            voteRepository.save(vote);
+            voteList.add(vote);
         }
+            voteRepository.saveAll(voteList);
 
         //결과 전송
-        VoteResponseDto voteResponseDto=VoteResponseDto.builder()
-            .pic1(pictureRepository.findPictureById(pic1).getName())
-            .pic2(pictureRepository.findPictureById(pic2).getName())
+        VoteResponseDto voteResponseDto = VoteResponseDto.builder()
+            .picId1(picId1)
+            .picId2(picId2)
+            .winPicId(winPicId)
             .pic1num(sum1)
             .pic2num(sum2)
+            .roundNum(roundNum)
             .build();
         sendingOperations.convertAndSend(PATH + roomId, voteResponseDto);
 
