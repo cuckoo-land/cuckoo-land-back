@@ -188,6 +188,13 @@ public class MajorityService {
         }
             voteRepository.saveAll(voteList);
 
+        //마지막 라운드(31)면 최종 우승 반영
+        if(roundNum==31){
+            Picture picture=pictureRepository.findPictureById(winPicId);
+            int i=picture.getNumOfWins();
+            picture.setNumOfWins(i+1);
+        }
+
         //결과 전송
         VoteResponseDto voteResponseDto = VoteResponseDto.builder()
             .picId1(picId1)
