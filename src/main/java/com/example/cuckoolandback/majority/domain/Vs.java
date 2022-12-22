@@ -36,4 +36,6 @@ public class Vs {
     int numOfVote2;
     @Column(nullable = false)
     int numOfTotal;
+    @Column(nullable = false)
+    double winnerRate;
 }

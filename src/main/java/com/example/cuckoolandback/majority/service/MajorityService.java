@@ -11,6 +11,7 @@ import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VoteRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
+import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
 import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;
@@ -142,6 +143,7 @@ public class MajorityService {
         //다수결쪽인 pic 판단
         int sum1 = 0;
         int sum2 = 0;
+        int winsum=0;
         List<VoteOptionDto> dtoVoteList = requestDto.getVoteList();
         for (VoteOptionDto vote : dtoVoteList) {
             if (vote.getPickId() == picId1) {
@@ -154,8 +156,10 @@ public class MajorityService {
         }
         if (sum1 > sum2) {
             winPicId = picId1;
+            winsum=sum1;
         } else if (sum2 > sum1) {
             winPicId = picId2;
+            winsum=sum2;
         } else if (sum1 == sum2) {
             //무승부, 아래로 가지 말고 다시 투표,,
             MajorityMessage message = MajorityMessage.builder()
@@ -174,6 +178,7 @@ public class MajorityService {
             .numOfVote1(sum1)
             .numOfVote2(sum2)
             .numOfTotal(sum1+sum2)
+            .winnerRate((double)winsum/(sum1+sum2)*100)
             .build();
         vsRepository.save(vs);
 
@@ -265,6 +270,13 @@ public class MajorityService {
             .id(majority.getId())
             .title(majority.getTitle())
             .build()).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<RankingResponseDto> getAllResult(Long roomId){
+        List<Vs> vsList = vsRepository.findAllByRoomIdOrderByRoundNum(roomId);
+
+        return null;
     }
 
     @Transactional
