@@ -171,6 +171,9 @@ public class MajorityService {
             .itemId1(picId1)
             .itemId2(picId2)
             .winner(winPicId)
+            .numOfVote1(sum1)
+            .numOfVote2(sum2)
+            .numOfTotal(sum1+sum2)
             .build();
         vsRepository.save(vs);
 

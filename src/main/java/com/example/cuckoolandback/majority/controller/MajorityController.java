@@ -2,11 +2,13 @@ package com.example.cuckoolandback.majority.controller;
 
 import com.example.cuckoolandback.majority.dto.*;
 import com.example.cuckoolandback.majority.service.MajorityService;
+import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -61,5 +63,11 @@ public class MajorityController {
         return ResponseEntity.ok()
                 .body(majorityService.getAllMajority());
     }
+
+//    //다수결 결과 조회 (+레포에 결과 반영)
+//    @GetMapping("/api/majority/result/{roomid}")
+//    public ResponseEntity<RankingResponseDto> getOneMajorRanking(@PathVariable String memberid) {
+//        return ResponseEntity.ok().body(rankingService.getOneMajorRanking(memberid));
+//    }
 
 }

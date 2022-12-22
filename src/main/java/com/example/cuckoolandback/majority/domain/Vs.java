@@ -27,6 +27,13 @@ public class Vs {
     @Column(nullable = false)
     Long itemId2;
 
-    @Column
+    @Column(nullable = false)
     Long winner;
+
+    @Column(nullable = false)
+    int numOfVote1;
+    @Column(nullable = false)
+    int numOfVote2;
+    @Column(nullable = false)
+    int numOfTotal;
 }
