@@ -66,7 +66,7 @@ public class MajorityController {
 
     //다수결 결과 조회 (+레포에 결과 반영)
     @GetMapping("/api/majority/result/{roomid}")
-    public ResponseEntity<List<RankingResponseDto>> getAllResult(@PathVariable Long roomid) {
+    public ResultResponseDto getAllResult(@PathVariable Long roomid) {
         return ResponseEntity.ok()
             .body(majorityService.getAllResult(roomid));
     }

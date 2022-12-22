@@ -143,7 +143,7 @@ public class MajorityService {
         //다수결쪽인 pic 판단
         int sum1 = 0;
         int sum2 = 0;
-        int winsum=0;
+        int winsum = 0;
         List<VoteOptionDto> dtoVoteList = requestDto.getVoteList();
         for (VoteOptionDto vote : dtoVoteList) {
             if (vote.getPickId() == picId1) {
@@ -156,10 +156,10 @@ public class MajorityService {
         }
         if (sum1 > sum2) {
             winPicId = picId1;
-            winsum=sum1;
+            winsum = sum1;
         } else if (sum2 > sum1) {
             winPicId = picId2;
-            winsum=sum2;
+            winsum = sum2;
         } else if (sum1 == sum2) {
             //무승부, 아래로 가지 말고 다시 투표,,
             MajorityMessage message = MajorityMessage.builder()
@@ -177,13 +177,13 @@ public class MajorityService {
             .winner(winPicId)
             .numOfVote1(sum1)
             .numOfVote2(sum2)
-            .numOfTotal(sum1+sum2)
-            .winnerRate((double)winsum/(sum1+sum2)*100)
+            .numOfTotal(sum1 + sum2)
+            .winnerRate((double) winsum / (sum1 + sum2) * 100)
             .build();
         vsRepository.save(vs);
 
         //vote레포 저장
-        List<Vote> voteList=new ArrayList<>();
+        List<Vote> voteList = new ArrayList<>();
         for (VoteOptionDto voteDto : dtoVoteList) {
             Vote vote = Vote.builder()
                 .roomId(roomId)
@@ -194,13 +194,13 @@ public class MajorityService {
                 .build();
             voteList.add(vote);
         }
-            voteRepository.saveAll(voteList);
+        voteRepository.saveAll(voteList);
 
         //마지막 라운드(31)면 최종 우승 반영
-        if(roundNum==31){
-            Picture picture=pictureRepository.findPictureById(winPicId);
-            int i=picture.getNumOfWins();
-            picture.setNumOfWins(i+1);
+        if (roundNum == 31) {
+            Picture picture = pictureRepository.findPictureById(winPicId);
+            int i = picture.getNumOfWins();
+            picture.setNumOfWins(i + 1);
         }
 
         //결과 전송
@@ -273,8 +273,31 @@ public class MajorityService {
     }
 
     @Transactional
-    public List<RankingResponseDto> getAllResult(Long roomId){
-        List<Vs> vsList = vsRepository.findAllByRoomIdOrderByRoundNum(roomId);
+    public ResultResponseDto getAllResult(Long roomId) {
+        List<Vs> vsList = vsRepository.findTop3ByRoomIdOrderByWinnerRate(roomId);
+        List<VoteResult> voteResultList = null;
+        for (Vs vs : vsList) {
+            VoteResult voteResult = VoteResult.builder()
+                .roundNum(vs.getRoundNum())
+                .winner(vs.getWinner())
+                .winnerRate(vs.getWinnerRate()).build();
+            voteResultList.add(voteResult);
+        }
+
+        //멤버들 각 얼마나 맞췄는지 계산
+        //투표한 사람 중
+        List<String> memberIdList=memberRepository.
+        for()
+        int numOfWin=voteRepository.numOfWin(roomId,memberId);
+
+        //각 랭킹 점수에 반영 (함수 따로 빼기)
+
+        ResultResponseDto responseDto=ResultResponseDto.builder()
+            .first()
+            .second()
+            .third()
+            .last()
+            .voteResultList(voteResultList).build();
 
         return null;
     }

@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface VsRepository extends JpaRepository<Vs,Long> {
     Optional<Vs> findByRoundNumAndRoomId(int roundNum, Long roomId);
-    List<Vs> findAllByRoomIdOrderByRoundNum(Long roomId);
+    List<Vs> findTop3ByRoomIdOrderByWinnerRate(Long roomId);
 }

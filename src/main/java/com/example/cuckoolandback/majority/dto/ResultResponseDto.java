@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResultResponseDto {
-    //멤버 순위
+    //멤버id 순위
     private String first;
     private String second;
     private String third;
