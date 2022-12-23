@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface VoteRepository extends JpaRepository<Vote,Long> {
-    @Query(value = "SELECT COUNT(*) FROM Vote\n" +
-        "WHERE roomId = :roomId and memberId=:memberId and isAns=:1",
+    @Query(value = "SELECT *, COUNT(case when isAns=1 then 1 end) as result FROM Vote\n " +
+        "WHERE roomId=:roomId group by memberId order by result desc ",
         nativeQuery = true)
-    int numOfWin(@Param("roomId")Long roomId,@Param("memberId")Long memberId);
+     List<Vote> findAllByRoomId(@Param("roomId")Long roomId);
     //Optional<Vote> findByRoundNumAndRoomId(int roundNum, Long roomId);
 }

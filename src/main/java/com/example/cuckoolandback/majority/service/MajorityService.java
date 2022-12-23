@@ -11,6 +11,7 @@ import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VoteRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
+import com.example.cuckoolandback.ranking.dto.MajorRank;
 import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
 import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
@@ -274,9 +275,10 @@ public class MajorityService {
 
     @Transactional
     public ResultResponseDto getAllResult(Long roomId) {
-        List<Vs> vsList = vsRepository.findTop3ByRoomIdOrderByWinnerRate(roomId);
-        List<VoteResult> voteResultList = null;
-        for (Vs vs : vsList) {
+        List<Vs> vsList = vsRepository.findAllByRoomIdOrderByWinnerRate(roomId);
+        List<VoteResult> voteResultList=new ArrayList<>();
+        for (int i=0;i<3;i++) {
+            Vs vs=vsList.get(i);
             VoteResult voteResult = VoteResult.builder()
                 .roundNum(vs.getRoundNum())
                 .winner(vs.getWinner())
@@ -284,22 +286,40 @@ public class MajorityService {
             voteResultList.add(voteResult);
         }
 
-        //멤버들 각 얼마나 맞췄는지 계산
-        //투표한 사람 중
-        List<String> memberIdList=memberRepository.
-        for()
-        int numOfWin=voteRepository.numOfWin(roomId,memberId);
+        //멤버들 각 얼마나 맞췄는지 계산 //수정예정
+
+        System.out.println(11111);
+        List<Vote> ranking = voteRepository.findAllByRoomId(roomId);
+        String first = ranking.get(0).getMemberId();
+        String second = ranking.get(1).getMemberId();
+        String third = ranking.get(2).getMemberId();
+        String last = ranking.get(ranking.size() - 1).getMemberId();
 
         //각 랭킹 점수에 반영 (함수 따로 빼기)
+        //member,picture에도 통계 반영
 
-        ResultResponseDto responseDto=ResultResponseDto.builder()
-            .first()
-            .second()
-            .third()
-            .last()
+        Member firstMem = memberRepository.findByMemberId(first)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member secondMem = memberRepository.findByMemberId(second)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member thirdMem = memberRepository.findByMemberId(third)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member lastMem = memberRepository.findByMemberId(last)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        firstMem.updateMajorScore(MajorRank.FIRST);
+        secondMem.updateMajorScore(MajorRank.SECOND);
+        thirdMem.updateMajorScore(MajorRank.THIRD);
+        lastMem.updateMajorScore(MajorRank.LAST);
+
+        ResultResponseDto responseDto = ResultResponseDto.builder()
+            .first(first)
+            .second(second)
+            .third(third)
+            .last(last)
             .voteResultList(voteResultList).build();
+        return responseDto;
 
-        return null;
     }
 
     @Transactional

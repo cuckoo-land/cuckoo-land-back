@@ -15,6 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 //    List<Member>(@Param("roomId")Long roomId);
     Optional<Member> findByMemberId(String memberId);
 
+
     Optional<Member> findByNickname(String nickname);
 
     List<Member> findFirst10ByOrderByMafiaWinScoreDesc();
