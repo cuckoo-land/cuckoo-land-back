@@ -1,6 +1,6 @@
 package com.example.cuckoolandback.user.jwt;
 
-import com.example.cuckoolandback.common.Message;
+import com.example.cuckoolandback.majority.common.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;

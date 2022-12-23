@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common.util;
+package com.example.cuckoolandback.majority.common.util;
 
 import javax.servlet.http.HttpServletRequest;
 

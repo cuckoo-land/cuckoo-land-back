@@ -1,26 +1,30 @@
 package com.example.cuckoolandback.user.service;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.user.domain.Member;
+import com.example.cuckoolandback.user.domain.RefreshToken;
 import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.domain.UserDetailsImpl;
-import com.example.cuckoolandback.user.dto.*;
+import com.example.cuckoolandback.user.dto.IdRequestDto;
+import com.example.cuckoolandback.user.dto.LoginRequestDto;
+import com.example.cuckoolandback.user.dto.MemberResponseDto;
+import com.example.cuckoolandback.user.dto.NickRequestDto;
+import com.example.cuckoolandback.user.dto.RegisterRequestDto;
 import com.example.cuckoolandback.user.jwt.JwtProvider;
-import com.example.cuckoolandback.user.domain.RefreshToken;
 import com.example.cuckoolandback.user.jwt.TokenDto;
 import com.example.cuckoolandback.user.repository.MemberRepository;
 import com.example.cuckoolandback.user.repository.RefreshTokenRepository;
+import java.util.Optional;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -55,14 +59,13 @@ public class MemberService {
                 .nickname(registerDto.getNickname())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .roleType(RoleType.USER)
-                .mafiaWinNum("0000")
+                .mafiaWinNum("0 0 0 0")
                 .mafiaWinScore(0)
-                .mafiaTier(0)
+                .mafiaTier(1)
                 .majorTotal(0)
-                .majorWinNum("00")
+                .majorWinNum("0 0")
                 .majorWinScore(0)
-                .majorWinNum("00")
-                .majorTier(0)
+                .majorTier(1)
                 .majorTotal(0)
                 .build();
 

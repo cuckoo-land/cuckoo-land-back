@@ -1,6 +1,6 @@
 package com.example.cuckoolandback.friend.domain;
 
-import com.example.cuckoolandback.common.domain.BaseTime;
+import com.example.cuckoolandback.majority.common.domain.BaseTime;
 import com.example.cuckoolandback.user.domain.Member;
 import lombok.*;
 

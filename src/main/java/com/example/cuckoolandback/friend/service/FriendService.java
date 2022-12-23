@@ -1,8 +1,8 @@
 package com.example.cuckoolandback.friend.service;
 
-import com.example.cuckoolandback.common.Message;
-import com.example.cuckoolandback.common.exception.CustomException;
-import com.example.cuckoolandback.common.exception.ErrorCode;
+import com.example.cuckoolandback.majority.common.Message;
+import com.example.cuckoolandback.majority.common.exception.CustomException;
+import com.example.cuckoolandback.majority.common.exception.ErrorCode;
 import com.example.cuckoolandback.friend.domain.Friend;
 import com.example.cuckoolandback.friend.domain.FriendStatus;
 import com.example.cuckoolandback.friend.dto.FriendRequestDto;

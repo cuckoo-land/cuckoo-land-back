@@ -1,4 +1,4 @@
-package com.example.cuckoolandback.common.config;
+package com.example.cuckoolandback.majority.common.config;
 
 import com.example.cuckoolandback.user.domain.RoleType;
 import com.example.cuckoolandback.user.jwt.JwtAuthEntryPoint;

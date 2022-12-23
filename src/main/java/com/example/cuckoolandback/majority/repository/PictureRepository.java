@@ -15,4 +15,6 @@ public interface PictureRepository extends JpaRepository<Picture,Long> {
             "ORDER BY RAND()",
             nativeQuery = true)
     List<Picture> findPicturesByRandom(@Param("majorityId") Long majorityId);
+    Picture findPictureById(Long id);
+    Picture findPictureByName(String name);
 }

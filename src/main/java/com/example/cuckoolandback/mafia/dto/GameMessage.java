@@ -1,6 +1,5 @@
 package com.example.cuckoolandback.mafia.dto;
 
-import com.example.cuckoolandback.common.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

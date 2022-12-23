@@ -1,7 +1,6 @@
 package com.example.cuckoolandback.user.domain;
 
-import com.example.cuckoolandback.common.domain.BaseTime;
-import com.example.cuckoolandback.user.domain.Member;
+import com.example.cuckoolandback.majority.common.domain.BaseTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

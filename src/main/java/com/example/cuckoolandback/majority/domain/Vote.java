@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Vs {
+public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -19,23 +19,15 @@ public class Vs {
     Long roomId;
 
     @Column(nullable = false)
-    int roundNum;
+    String memberId;
 
     @Column(nullable = false)
-    Long itemId1;
+    Long pickId; //투표한 item아이디
 
     @Column(nullable = false)
-    Long itemId2;
+    Long notPickId; //상대 item아이디
 
     @Column(nullable = false)
-    Long winner;
+    boolean isAns;
 
-    @Column(nullable = false)
-    int numOfVote1;
-    @Column(nullable = false)
-    int numOfVote2;
-    @Column(nullable = false)
-    int numOfTotal;
-    @Column(nullable = false)
-    double winnerRate;
 }
