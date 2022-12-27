@@ -345,7 +345,22 @@ public class MafiaController {
                 Member member = memberRepository.findByMemberId(player.getMemberId()).orElseThrow(
                         ()->new CustomException(ErrorCode.USER_NOT_FOUND)
                 );
-                member.setMafiaWinNum(member.getMafiaWinNum()+1);
+                String[] winNums = member.getMafiaWinNum().split(" ");
+                switch (player.getRole()) {
+                    case CITIZEN:
+                        winNums[0] = String.valueOf(Integer.parseInt(winNums[0]) + 1);
+                        break;
+                    case POLICE:
+                        winNums[2] = String.valueOf(Integer.parseInt(winNums[2]) + 1);
+                        break;
+                    case DOCTOR:
+                        winNums[3] = String.valueOf(Integer.parseInt(winNums[3]) + 1);
+                        break;
+                    default:
+                        break;
+                }
+                String result = String.join(" ", winNums);
+                member.setMafiaWinNum(result);
                 memberRepository.save(member);
             }
             List<Player> players = playerRepository.findByRoomId(message.getRoomId());
@@ -363,7 +378,11 @@ public class MafiaController {
                 Member member = memberRepository.findByMemberId(player.getMemberId()).orElseThrow(
                         ()->new CustomException(ErrorCode.USER_NOT_FOUND)
                 );
-                member.setMafiaWinNum(member.getMafiaWinNum()+1);
+
+                String[] winNums = member.getMafiaWinNum().split(" ");
+                winNums[1] = String.valueOf(Integer.parseInt(winNums[1]) + 1);
+                String result = String.join(" ", winNums);
+                member.setMafiaWinNum(result);
                 memberRepository.save(member);
             }
             List<Player> players = playerRepository.findByRoomId(message.getRoomId());
