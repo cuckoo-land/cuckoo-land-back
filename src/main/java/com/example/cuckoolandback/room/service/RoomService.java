@@ -12,10 +12,12 @@ import com.example.cuckoolandback.room.dto.RoomRequestDto;
 import com.example.cuckoolandback.room.dto.RoomResponseDto;
 import com.example.cuckoolandback.room.repository.ParticipantRepository;
 import com.example.cuckoolandback.room.repository.RoomRepository;
+import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +74,10 @@ public class RoomService {
 
     @Transactional
     public RoomResponseDto createRoom(RoomRequestDto roomRequestDto){
+
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
         Room room = Room.builder()
                 .code(UUID.randomUUID().toString().substring(0,8))
                 .title(roomRequestDto.getTitle())
@@ -90,7 +96,7 @@ public class RoomService {
         try{
             roomRepository.save(room);
             participantRepository.save(Participant.builder()
-                    .id(roomRequestDto.getHostId())
+                    .id(principal.getMember().getMemberId())
                     .roomId(room.getId())
                     .hostTF(true)
                     .build());

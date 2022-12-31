@@ -339,7 +339,7 @@ public class MajorityService {
 
         Member member = memberOptional.get();
 
-        addParticipant(requestDto.getNickname(), requestDto.getRoomId());
+        addParticipant(member.getMemberId(), requestDto.getRoomId());
 
         sendingOperations.convertAndSend(PATH + requestDto.getRoomId(), EnterResponseDto
             .builder()
