@@ -17,8 +17,8 @@ public interface PictureRepository extends JpaRepository<Picture,Long> {
     List<Picture> findPicturesByRandom(@Param("majorityId") Long majorityId);
     Picture findPictureById(Long id);
     Picture findPictureByName(String name);
-    List<Picture> findFirstByMajorityIdOrderByNumOfWinsDesc();
-    @Query(value = "SELECT distinct majorityId FROM Picture\n",
+    //List<Picture> findFirstByMajorityIdOrderByNumOfWinsDesc();
+    @Query(value = "SELECT count(distinct majorityId) FROM Picture\n",
         nativeQuery = true)
     int countAllByMajorityId();
 
