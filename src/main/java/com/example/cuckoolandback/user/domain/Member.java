@@ -46,6 +46,9 @@ public class Member extends BaseTime {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+    public void updateMemo(String memo){
+        this.memo=memo;
+    }
 
     public void updateMajorScore(MajorRank majorRank) {
         String[] str=this.majorWinNum.split(" ");

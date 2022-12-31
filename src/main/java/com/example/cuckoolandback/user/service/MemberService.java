@@ -10,6 +10,7 @@ import com.example.cuckoolandback.user.domain.UserDetailsImpl;
 import com.example.cuckoolandback.user.dto.IdRequestDto;
 import com.example.cuckoolandback.user.dto.LoginRequestDto;
 import com.example.cuckoolandback.user.dto.MemberResponseDto;
+import com.example.cuckoolandback.user.dto.MemoRequestDto;
 import com.example.cuckoolandback.user.dto.NickRequestDto;
 import com.example.cuckoolandback.user.dto.RegisterRequestDto;
 import com.example.cuckoolandback.user.jwt.JwtProvider;
@@ -172,4 +173,15 @@ public class MemberService {
         memberRepository.save(member);
         return Message.UPDATE_NICKNAME_SUCCESS.getMsg();
     }
+    @Transactional
+    public String updateMemo(MemoRequestDto memoRequestDto) {
+        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        Member member = memberRepository.findById(principal.getMember().getSeq())
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        member.updateMemo(memoRequestDto.getMemo());
+        memberRepository.save(member);
+        return Message.UPDATE_MEMO_SUCCESS.getMsg();
+    }
+
 }
