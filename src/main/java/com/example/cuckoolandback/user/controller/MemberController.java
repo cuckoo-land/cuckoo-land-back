@@ -91,4 +91,12 @@ public class MemberController {
                 .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
                 .body(memberService.updateNickname(nickRequestDto));
     }
+
+    @ApiOperation(value = "메모 수정")
+    @PutMapping("/auth/updatememo")
+    public ResponseEntity<String> updatememo(@Valid @RequestBody MemoRequestDto memoRequestDto){
+        return ResponseEntity.ok()
+            .contentType(new MediaType("applicaton", "text", StandardCharsets.UTF_8))
+            .body(memberService.updateMemo(memoRequestDto));
+    }
 }

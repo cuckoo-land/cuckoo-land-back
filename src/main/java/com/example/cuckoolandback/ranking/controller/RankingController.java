@@ -1,6 +1,7 @@
 package com.example.cuckoolandback.ranking.controller;
 
 import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
+import com.example.cuckoolandback.ranking.dto.TopicRankResponseDto;
 import com.example.cuckoolandback.ranking.service.RankingService;
 import com.example.cuckoolandback.user.service.MemberService;
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +44,12 @@ public class RankingController {
     @GetMapping("/majority/{memberid}")
     public ResponseEntity<RankingResponseDto> getOneMajorRanking(@PathVariable String memberid) {
         return ResponseEntity.ok().body(rankingService.getOneMajorRanking(memberid));
+    }
+
+    @ApiOperation(value = "다수결 주제별 랭킹 조회")
+    @GetMapping("/majority/sub")
+    public ResponseEntity<List<TopicRankResponseDto>> getMajorTopicRanking() {
+        return ResponseEntity.ok().body(rankingService.getMajorTopicRanking());
     }
 
 

@@ -11,6 +11,7 @@ public enum Message {
     REISSUE_COMPLETED_TOKEN("토큰 재발급 완료"),
     LOGOUT_SUCCESS("로그아웃 완료"),
     UPDATE_NICKNAME_SUCCESS("닉네임 수정을 완료 하였습니다."),
+    UPDATE_MEMO_SUCCESS("메모 수정을 완료 하였습니다."),
     AUTHENTICATION_FAIL("Authentication failed, login or reissue token"),
     //ROOM
     DELETE_SUCCESS("delete success"),

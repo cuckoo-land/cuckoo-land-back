@@ -1,5 +1,6 @@
 package com.example.cuckoolandback.user.repository;
 
+import com.example.cuckoolandback.majority.domain.Picture;
 import com.example.cuckoolandback.user.domain.Member;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
