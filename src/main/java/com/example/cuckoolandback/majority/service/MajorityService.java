@@ -11,8 +11,7 @@ import com.example.cuckoolandback.majority.repository.MajorityRepository;
 import com.example.cuckoolandback.majority.repository.PictureRepository;
 import com.example.cuckoolandback.majority.repository.VoteRepository;
 import com.example.cuckoolandback.majority.repository.VsRepository;
-import com.example.cuckoolandback.ranking.dto.MajorRank;
-import com.example.cuckoolandback.ranking.dto.RankingResponseDto;
+import com.example.cuckoolandback.majority.dto.MajorRank;
 import com.example.cuckoolandback.room.domain.Participant;
 import com.example.cuckoolandback.room.domain.Room;
 import com.example.cuckoolandback.room.domain.RoomStatus;
@@ -286,17 +285,14 @@ public class MajorityService {
             voteResultList.add(voteResult);
         }
 
-        //멤버들 각 얼마나 맞췄는지 계산 //수정예정
-
-        System.out.println(11111);
+        //멤버 순위 매기기
         List<Vote> ranking = voteRepository.findAllByRoomId(roomId);
         String first = ranking.get(0).getMemberId();
         String second = ranking.get(1).getMemberId();
         String third = ranking.get(2).getMemberId();
         String last = ranking.get(ranking.size() - 1).getMemberId();
 
-        //각 랭킹 점수에 반영 (함수 따로 빼기)
-        //member,picture에도 통계 반영
+        //member,picture에 결과 반영
 
         Member firstMem = memberRepository.findByMemberId(first)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -311,6 +307,7 @@ public class MajorityService {
         secondMem.updateMajorScore(MajorRank.SECOND);
         thirdMem.updateMajorScore(MajorRank.THIRD);
         lastMem.updateMajorScore(MajorRank.LAST);
+
 
         ResultResponseDto responseDto = ResultResponseDto.builder()
             .first(first)

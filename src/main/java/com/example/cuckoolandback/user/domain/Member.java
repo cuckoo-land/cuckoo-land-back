@@ -2,7 +2,7 @@ package com.example.cuckoolandback.user.domain;
 
 import com.example.cuckoolandback.majority.common.domain.BaseTime;
 import com.example.cuckoolandback.friend.domain.Friend;
-import com.example.cuckoolandback.ranking.dto.MajorRank;
+import com.example.cuckoolandback.majority.dto.MajorRank;
 import lombok.*;
 import javax.persistence.*;
 import java.util.List;
